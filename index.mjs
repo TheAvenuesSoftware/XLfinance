@@ -37,7 +37,7 @@ const consoleLog = false;
 // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 // 1️⃣ import statements
     // // axios
-    //     import axios from 'axios';
+        import axios from 'axios';
     // OS ~ operatingSystem
         import os from 'os';
     // FS ~ fileSystem
@@ -107,7 +107,7 @@ const consoleLog = false;
         
     // function checkImports(){
         try{
-            // console.log("Imported axios:", axios ? "✅ " : "❌ Failed");
+            console.log("Imported axios:", axios ? "✅ " : "❌ Failed");
             console.log("Imported os:", os ? "✅ " : "❌ Failed");
             console.log("Imported fs:", fs ? "✅ " : "❌ Failed");
             console.log("Imported path:", path ? "✅ " : "❌ Failed");
@@ -193,6 +193,25 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
 if(consoleLog===true){console.log(("<>").repeat(60));}
 if(consoleLog===true){console.log(trace());}
 if(consoleLog===true){console.log(("<>").repeat(60));}
+// // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
+//     // AXIOS configuration
+//         axios.defaults.timeout = 10000; // 10 seconds   
+//     // FINNHUB setup
+//         const finnhubApiKey = process.env.FINNHUB_API_KEY || "";
+//         if (!finnhubApiKey) {
+//             // throw new Error('Missing FINNHUB_API_KEY in environment variables.');
+//             console.log(trace(),'❌🔴🔑❌🔴🔑Missing FINNHUB_API_KEY in environment variables.❌🔴🔑❌🔴🔑');
+//         }
+//     // Create a pre-configured axios instance
+//         const finnhub = axios.create({
+//             baseURL: 'https://finnhub.io/api/v1',
+//             params: { token: finnhubApiKey },
+//             timeout: 5000, // optional
+//         });
+// //    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹    🔹
+// if(consoleLog===true){console.log(("<>").repeat(60));}
+// if(consoleLog===true){console.log(trace());}
+// if(consoleLog===true){console.log(("<>").repeat(60));}
 // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 // 3️⃣ create express app
     const app = express();
