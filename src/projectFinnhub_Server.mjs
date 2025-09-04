@@ -18,14 +18,14 @@ if (!finnhubApiKey) {
 	console.log(trace(),'❌🔴🔑❌🔴🔑Missing finnhubApiKey in environment variables.❌🔴🔑❌🔴🔑');
 }
 
-// Create a pre-configured axios instance
-const finnhub = axios.create({
-  baseURL: 'https://finnhub.io/api/v1',
-  timeout: 5000, // 5 seconds
-  params: {
-    token: finnhubApiKey,
-  },
-});
+// // Create a pre-configured axios instance
+// const finnhub = axios.create({
+//   baseURL: 'https://finnhub.io/api/v1',
+//   timeout: 5000, // 5 seconds
+//   params: {
+//     token: finnhubApiKey,
+//   },
+// });
 
 // Example: Get stock quote
 	export async function getQuote(symbol) {

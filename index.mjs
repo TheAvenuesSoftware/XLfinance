@@ -14,7 +14,7 @@ myDate = new Date();
 console.log(("🔰").repeat(60));
 console.log(`🔰 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}${(" ").repeat(118-(`🔰 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`).length)}🔰`);
 myDate = new Date();
-console.log(`🔰 ${myDate}${(" ").repeat(118-(`🎾 ${myDate}`).length)}🔰`);
+console.log(`🔰 ${myDate}${(" ").repeat(118-(`💲 ${myDate}`).length)}🔰`);
 process.env.APP_TZ = "Australia/Sydney"; // 🌏 Sets the server timezone
 console.log(`🔰 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}${(" ").repeat(118-(`🔰 Server running in timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`).length)}🔰`);
 console.log(("🔰").repeat(60));
@@ -62,8 +62,8 @@ const consoleLog = false;
     //     import * as cookie from "cookie";
     // // COOKIE PARSER
         import cookieParser from 'cookie-parser';
-    // JSONWEBTOKE for user authentication
-        import jwt from 'jsonwebtoken';
+    // // JSONWEBTOKE for user authentication
+    //     import jwt from 'jsonwebtoken';
     // CRYPTO
         import crypto from 'crypto'
         import { randomUUID } from 'crypto'; // randomUUID is a named export from crypto
@@ -72,34 +72,35 @@ const consoleLog = false;
     // CORS handling START
         import cors from 'cors';
     // SQLite
-        // async await environment
-            import sqlite3 from "sqlite3"; //The core Node.js SQLite package (handles database operations).
-            import { open } from "sqlite"; // The SQLite package that provides a promise-based API for database operations.
-    // busboy
-        import busboy from 'busboy'; // For handling file uploads in Express.js
+        // // async await environment
+        //     import sqlite3 from "sqlite3"; //The core Node.js SQLite package (handles database operations).
+        //     import { open } from "sqlite"; // The SQLite package that provides a promise-based API for database operations.
+        import { open } from 'sqlite';
+        import sqlite3 from 'sqlite3';
+    // // busboy
+    //     import busboy from 'busboy'; // For handling file uploads in Express.js
     // RATE LIMITER
         import { rateLimit } from 'express-rate-limit';         
-    // SANITIZE INPUTS
-        import sanitizeHtml from "sanitize-html";
-        const userInput = "<script>alert('Hacked!');</script><p>Hello</p>";
-        const cleanInput = sanitizeHtml(userInput);
-        console.log(`${trace()} 🟢 sanitizeHtml() functionality is in place:- ${cleanInput}`); // Output: "<p>Hello</p>";
-        // examples
-            // 1
-                // const cleanInput = sanitizeHtml(userInput, {
-                //     allowedTags: ["p", "strong", "a"],
-                //     allowedAttributes: {
-                //         "a": ["href"]
-                //     }
-                // });
-                // console.log(cleanInput); // Only keeps `<p>`, `<strong>`, and `<a>`
+    // // SANITIZE INPUTS
+    //     import sanitizeHtml from "sanitize-html";
+    //     const userInput = "<script>alert('Hacked!');</script><p>Hello</p>";
+    //     const cleanInput = sanitizeHtml(userInput);
+    //     console.log(`${trace()} 🟢 sanitizeHtml() functionality is in place:- ${cleanInput}`); // Output: "<p>Hello</p>";
+    //     // examples
+    //         // 1
+    //             // const cleanInput = sanitizeHtml(userInput, {
+    //             //     allowedTags: ["p", "strong", "a"],
+    //             //     allowedAttributes: {
+    //             //         "a": ["href"]
+    //             //     }
+    //             // });
+    //             // console.log(cleanInput); // Only keeps `<p>`, `<strong>`, and `<a>`
     // ROUTERS
         import dbRouter from "./src/projectSQLite_Server.mjs";
         import loginRouter from './src/globalLogin_Server.mjs';
         import globalRouter from './src/global_Server.mjs'; 
         import projectRouter from './src/project_Server.mjs';
         import sessionsRouter from './src/globalSessions_Server.mjs';
-        import googleAPIsRouter from './src/projectGoogleAPIs_Server.mjs';
     // SQLite CRUD
         // import { insertFormDataRecord, getRecord, updateRecord, deleteRecord } from "./src/SQLite_ServerSide.mjs";
     // // Trace()
@@ -116,7 +117,7 @@ const consoleLog = false;
             console.log("Imported express:", express ? "✅ " : "❌ Failed");
             // console.log("Imported cookie / cookie:", cookie ? "✅ " : "❌ Failed"); ... this is not middleware, but a utility to parse cookies
             console.log("Imported cookieParser / cookie-parser:", cookieParser ? "✅ " : "❌ Failed");
-            console.log("Imported jwt / jsonwebtoken:", jwt ? "✅ " : "❌ Failed");
+            // console.log("Imported jwt / jsonwebtoken:", jwt ? "✅ " : "❌ Failed");
             console.log("Imported crypto:", crypto ? "✅ " : "❌ Failed");
             console.log("Imported crypto { randomUUID }:", randomUUID ? "✅ " : "❌ Failed");
             // console.log("Imported session / express-session:", session ? "✅ " : "❌ Failed");
@@ -129,7 +130,6 @@ const consoleLog = false;
             console.log("Imported globalRouter:", globalRouter ? "✅ " : "❌ Failed");
             console.log("Imported projectRouter:", projectRouter ? "✅ " : "❌ Failed");
             console.log("Imported sessionsRouter:", sessionsRouter ? "✅ " : "❌ Failed");
-            console.log("Imported googleAPIsRouter:", googleAPIsRouter ? "✅ " : "❌ Failed");
             // console.log("Imported {insertFormDataRecord} from SQLite_ServerSide.mjs:", insertFormDataRecord ? "✅ " : "❌ Failed");
             // console.log("Imported {getRecord} from SQLite_ServerSide.mjs:", getRecord ? "✅ " : "❌ Failed");
             // console.log("Imported {updateRecord} from SQLite_ServerSide.mjs:", updateRecord ? "✅ " : "❌ Failed");
@@ -233,7 +233,6 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
                 app.use("/globalRouter", globalRouter);
                 app.use("/projectRouter", projectRouter);
                 app.use("/sessionsRouter", sessionsRouter);
-                app.use("/googleAPIsRouter", googleAPIsRouter);
                 console.log(`${trace()}🟢 Routers mounted ~ must be done after Authentication is setup.`);
             }
             catch (error) {
@@ -314,7 +313,7 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
             // console.log(`🔒 ${trace()} req.body`,req.body);
             const safeURLs = JSON.parse(fs.readFileSync("knownURLs.json", "utf8")).safe_URLs;
                 if (!safeURLs.includes(req.url)) {
-                    const allowedRouters = ["/tinymce/", "/dbRouter/", "/projectRouter/", "/globalRouter/", "/loginRouter/", "/sessionsRouter/", "/googleAPIsRouter/"];
+                    const allowedRouters = ["/tinymce/", "/dbRouter/", "/projectRouter/", "/globalRouter/", "/loginRouter/", "/sessionsRouter/"];
                     if (allowedRouters.some(prefix => req.url.startsWith(prefix))) {
                         // console.log("Request is allowed");
                         console.warn(`🪣 ${trace()}🔑✅🟢 Access allowed to router:- ${req.url}`);
@@ -812,7 +811,7 @@ if(consoleLog===true){console.log(("<>").repeat(60));}
 // //                 console.warn(`🪣 ${trace()}🔒⚠️Session ID mismatch detected, cookieSid != headersSid:-\n🪣 ${cookieSid} v \n🪣 ${headerSid_decoded}`);
 // //                 console.warn(`🪣 ${trace()}🔒⚠️Session ID mismatch detected for ${req.url}`);
 // //                 if (!safeURLs.includes(req.url)) {
-// //                     const allowedRouters = ["/dbRouter/", "/projectRouter/", "/globalRouter/", "/loginRouter/", "/sessionsRouter/", "/googleAPIsRouter/"];
+// //                     const allowedRouters = ["/dbRouter/", "/projectRouter/", "/globalRouter/", "/loginRouter/", "/sessionsRouter/"];
 // //                     if (allowedRouters.some(prefix => req.url.startsWith(prefix))) {
 // //                         // console.log("Request is allowed");
 // //                         console.warn(`🪣 ${trace()}🔒⚠️🟢 Access allowed to router:- ${req.url}`);
@@ -1074,17 +1073,17 @@ setInterval(() => {
     function logServerStartup(){
         console.log(`${trace()}🔍 SERVER MODE = production:`, isProduction);
         console.log(`${trace()}🔍 SERVER MODE = development:`, isDevelopment);
-        console.log(("🎾").repeat(60));
+        console.log(("💲💲").repeat(30));
         // console.log(`${trace()}\nServer is running on port:${PORT}\nAccessible on the server at either http://localhost:${PORT} or http://${DEV_IP_ADDRESS}:${PORT}.\nAccessible on the LAN at http://${DEV_IP_ADDRESS}:${PORT}.`);
-        console.log(`🎾 ${trace()}${(" ").repeat(118-(`🎾 ${trace()}`).length)}🎾`);
+        console.log(`💲 ${trace()}${(" ").repeat(118-(`💲 ${trace()}`).length)}💲`);
         myDate = new Date();
-        console.log(`🎾 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}${(" ").repeat(118-(`🎾 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`).length)}🎾`);
-        console.log(`🎾 Server is running on port:${PORT}.${(" ").repeat(118-(`🎾 Server is running on port:${PORT}.`).length)}🎾`);
+        console.log(`💲 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}${(" ").repeat(118-(`💲 ${myDate.toLocaleDateString()} ${myDate.toLocaleTimeString()}`).length)}💲`);
+        console.log(`💲 Server is running on port:${PORT}.${(" ").repeat(118-(`💲 Server is running on port:${PORT}.`).length)}💲`);
         console.log(isProduction==="true" ?
-            `🎾 Server is running in Production mode. ${(" ").repeat(117-(`🎾 Server is running in Production mode.`).length)}🎾` : 
-            `🎾 Server is running in Development mode. ${(" ").repeat(117-(`🎾 Server is running in Development mode.`).length)}🎾`);
-        // console.log(`🎾 Server is running on port # ${process.env.APP_PORT}${(" ").repeat(118-(`🎾 Server is running on port # ${process.env.APP_PORT}`).length)}🎾`);
-        console.log(("🎾").repeat(60));
+            `💲 Server is running in Production mode. ${(" ").repeat(117-(`💲 Server is running in Production mode.`).length)}💲` : 
+            `💲 Server is running in Development mode. ${(" ").repeat(117-(`💲 Server is running in Development mode.`).length)}💲`);
+        // console.log(`💲 Server is running on port # ${process.env.APP_PORT}${(" ").repeat(118-(`💲 Server is running on port # ${process.env.APP_PORT}`).length)}💲`);
+        console.log(("💲").repeat(60));
     };
     const PORT = process.env.APP_PORT;
     const DEV_IP_ADDRESS = process.env.APP_DEV_IP_ADDRESS;
