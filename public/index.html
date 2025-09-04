@@ -1,0 +1,478 @@
+<!-- collapse all     Ctrl + k + 0 -->
+<!-- expand all       Ctrl + k + j -->
+<!-- format           Alt + Shift + F (USE WITH CAUTION)-->
+<!-- word wrap toggle Alt + z -->
+<!-- - Element IDs & Classes: Use kebab-case (e.g., <div id="user-profile">) -->
+<!-- - Attributes: Follow HTML syntax conventions, using lowercase (e.g., <input type="text">) -->
+<!-- - Custom Attributes: Typically data-* (e.g., data-user-id) -->
+    
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- BEST PRACTICE SECTION of <head></head> ELEMENT start -->
+    <!-- 🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕 -->
+        <!-- ✅ Basic Setup -->
+            <!--  -->
+                <meta charset="UTF-8">
+            <!--  -->
+                <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+            <!--  -->
+                <title>Tradie Photo</title>
+            <!--  -->
+                <!-- <meta name="description" content="Your concise, compelling page summary goes here."> -->
+                <meta name="description" content="Safe travelling, information for Australian Ride Share riders and drivers.">
+            <!--  -->
+                <link rel="canonical" href="https://yourdomain.com/current-page">
+
+        <!-- 🌐 SEO & Social Sharing -->
+            <!--  -->
+                <!-- Use meta robots tags only when you want to restrict the way GOOGLE crawls a page; -->
+                <meta name="robots" content="index, follow">
+            <!--  -->
+                <meta property="og:title" content="__projectTemplate">
+                <meta property="og:description" content="Your compelling Open Graph summary.">
+                <meta property="og:image" content="https://yourdomain.com/images/preview.jpg">
+                <meta property="og:url" content="https://yourdomain.com/current-page">
+            <!--  -->
+                <meta name="twitter:card" content="summary_large_image">
+
+        <!-- 🔧 PWA Setup
+            <link rel="manifest" href="/manifest.json">
+            <meta name="mobile-web-app-capable" content="yes">
+            <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+            Optional for iOS
+                <meta name="apple-mobile-web-app-capable" content="yes">
+            This is recognized by Chrome on Android and aligns better with current PWA standards.
+                <meta name="mobile-web-app-capable" content="yes">
+            
+                <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> -->
+
+        <!-- 🧠 Favicons & Icons -->
+            <!-- <link rel="icon" href="/favicon.ico"> -->
+            <link rel="icon" type="image/png" href="./favicon.png">
+            <link rel="apple-touch-icon" href="./favicon.png">
+
+        <!-- ✨ Structured Data (JSON-LD) -->
+            <script type="application/ld+json">
+                {
+                    "@context": "https://schema.org",
+                    "@type": "WebPage",
+                    "name": "Your Page Title",
+                    "description": "Your page description",
+                    "url": "https://yourdomain.com/current-page"
+                }
+            </script>
+
+        <!-- 📦 Preconnect/Preload/Font Optimization -->
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+
+    <!-- 🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕🧕 -->
+    <!-- BEST PRACTICE SECTION of <head></head> ELEMENT end -->
+
+    <link rel="stylesheet" href="./project.css">
+    <!-- <link rel="stylesheet" href="projectMenu.css"> -->
+    <!-- <link rel="stylesheet" href="global.css"> -->
+
+    <script type="module" src="./globalLogin_Client.mjs"></script>
+    <script type="module" src="./globalSessions_Client.mjs"></script>
+
+    <script type="module" src="./global_Client.mjs"></script>
+    <script type="module" src="./project_Client.mjs"></script>
+    <script type="module" src="./projectCamera_Client.mjs"></script>
+    <!-- <script type="module" src="./projectFormattedTextArea_Client.mjs"></script> -->
+    <!-- <script type="module" src="./projectLexical_Client.mjs"></script> -->
+    <!-- TinyMCE start -->
+        <!-- <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script> -->
+         <!-- .....\node_modules\tinymce -->
+            <script src="/tinymce/tinymce.min.js"></script>
+         <!-- .....\node_modules\tinymce -->
+    <!-- TinyMCE end -->
+    <script type="module" src="./projectTinyMCE_Client.mjs"></script>
+    <script type="module" src="./projectMenu_Client.mjs"></script>
+    <script type="module" src="./globalUIpopups_Client.mjs"></script>
+    <script type="module" src="./projectGoogleAPIs_Client.mjs"></script>
+    <script type="module" src="./globalUploadImage_Client.mjs"></script>
+    
+    <script type="module" src="./global_Client_Dimensions.mjs"></script>
+
+    <script type="module" src="./globalConfig_Client.mjs"></script>
+    <script type="module" src="./projectConfig_Client.mjs"></script>
+
+
+    <!-- <script
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&v=weekly&region=AU"
+    async
+    defer
+    ></script>
+    <script
+    src="https://www.gstatic.com/maps-platform/place-autocomplete-element/v1/place-autocomplete-element.js"
+    async
+    defer
+    ></script> -->
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="./favicon.png">
+
+
+    <style>
+        /* *{
+            border:1px solid red;
+        } */
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        /* .header-controls-container{ */
+        header > div{
+            display: flex;
+            /* justify-content: center; */
+            justify-content: space-between;
+            align-items: center;
+            text-align: center; /* targets the text within a div */
+            padding: 3px;
+            background-color: rgba(25, 255, 25,.5);
+            background-color: rgb(67, 248, 67);
+            color: rgba(0, 55, 0,1);
+            font-weight: 900;
+        }
+        /* sign IN OUT start */
+            header .sign-in-out-icon-container img{
+                display:flex;
+                border-radius: 5px;
+                width:30px;
+                height:25px;
+                /* display:flex; */
+                cursor:pointer;
+            }
+            header .sign-in-out-icon-container .icon-hidden{
+                    display:none;
+            }
+        /* sign IN OUT end */
+        footer {
+            display:flex;
+            flex-shrink: 0;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            background-color: rgba(25, 255, 25,.5);
+            background-color: rgb(67, 248, 67);
+            color: rgba(0, 55, 0,1);
+            font-weight: 900;
+            padding: 2.5px;
+            margin: 0px;
+        }
+        .footer-control {
+            /* margin: 0 2.5px; */
+            padding: 0 2.5px;
+            cursor: pointer;
+            height:30px;
+            width:44px;
+        }
+        .footer-control:hover {
+            border: 2px solid black;
+        }
+        main {
+            position: relative;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        section {
+            position: absolute;
+            top: 0; left: 0px; right: 0; bottom: 0;
+            flex: 1;
+            overflow-y: auto;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+            padding: 1rem;
+        }
+        section.active {
+            opacity: 1;
+            visibility: visible;
+            transition-delay: 0.25s;
+        }
+        .section-heading{
+            font-weight: 900;
+        }
+    </style>
+
+</head>
+<body>
+    <header>
+        <div id="header-controls-container" class="header-controls-container">
+            <div class="app-name" class="header-control">
+                <span>Tradie Photo Catalogue</span>
+            </div>
+            <div id="user-email-address" class="header-control user-email-address">
+                <span>...not signed in.</span>
+            </div>
+            <div id="sign-in-out-icon-container" class="header-control sign-in-out-icon-container" data-status="signed-out" tabindex="-1" role="button" title="Click to sign in.">
+                <img id="padlock-icon" src="__padlock_locked.png" class="icon">
+            </div> 
+        </div>
+    </header>
+    <main>
+
+                <section id="section0" class="section0 section-home">
+                    <!-- 🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡 -->
+                    <!-- home -->
+                    <input id="section0-focus-on-activation" style="position:fixed;left:-5000px;" tabindex="-1">
+                    <p class="section-heading">Home</p><br>
+                    <p style="text-align: center;"><b>|&nbsp&nbspNo more lost job photos.&nbsp&nbsp|&nbsp&nbspStore them by job address.&nbsp&nbsp|&nbsp&nbspAdd a job note to each photo.&nbsp&nbsp|</b></p><br>
+                    <p><strong>Easily find photos searching by:-</strong></p>
+                    <ol>
+                        <li style="margin-left:20px;">job address; any part of a job address.</li>
+                        <li style="margin-left:20px;">job note; any part of a job note.</li>
+                        <li style="margin-left:20px;">job date.</li>
+                    </ol>
+                    <br>
+                    <p><strong>Create an account to:</strong></p>
+                    <ul>
+                        <li style="margin-left:20px;list-style-type: none;">Store and retrieve photos along with the</li>
+                        <ul>
+                            <li style="margin-left:40px;">address.</li>
+                            <li style="margin-left:40px;">date and time taken.</li>
+                            <li style="margin-left:40px;">job note.</li>
+                        </ul> 
+                    </ul> 
+                    <br>
+                    <p><strong>Your account data security and privacy features:</strong></p>
+                    <ol>
+                        <li style="margin-left:20px;">Secure login.  A login code is emailed to your chosen email address.  Use the code to access your account.  Your account is not accessible without the one-time-use code.</li>
+                        <li style="margin-left:20px;">If your email account is secure, your account and your information stored at Tradie Photo Catalogue is secure.</li>
+                        <li style="margin-left:20px;">No images are stored on the Tradie Photo Catalogue server.  Images are stored as non-viewable data but they are rendered in your browser as viewable images.</li>
+                    </ol>
+                    <!-- 🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡 -->
+                </section>
+                <section id="section1" class="section1 section-menu">
+                    <!-- 🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒 -->
+                    <!-- menu -->
+                    <!-- 🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒 -->
+                </section>
+                <section id="section2" class="section2 section-camera">
+                    <!-- ✅📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷 -->
+                    <!-- camera -->
+                        <input id="section2-focus-on-activation" style="position:fixed;left:-5000px;" tabindex="-1">
+                        <p class="section-heading">Camera View</p>
+                        <div id="video-container" class="video-container">
+                            <video id="camera-stream" autoplay muted playsinline></video>
+                            <div class="controls-wrapper">
+                                <label>Zoom:<br>
+                                    <input type="range" id="zoom" min="0.0" max="4" step="0.025">
+                                </label>
+                                <button id="capture-still" class="std-btn">Capture Image</button>
+                            </div>
+                        </div>
+                        <p id="canvas-container-heading" class="section-heading canvas-container-heading">Image Captured</p>
+                        <div id="canvas-container" class="canvas-container">
+                            <!-- <div id="canvas-container" class="canvas-container" style="flex-direction: column; align-items: center;"> -->
+                            <canvas id="canvas"></canvas>
+                        </div>
+                    <!-- ✅📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷📸📷 -->
+                    <!-- ✅🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️ -->
+                    <!-- uplad image file as blob  -->
+                        <p class="section-heading image-upload-selection-heading">Image Upload Selection</p>
+                        <div class="upload-image-container">
+                                <div class="upload-image-file">
+                                    <label for="imageInput" class="std-btn NO-custom-file-upload">Select Image</label>
+                                    <input type="file" data-action="selectImageToUpload" id="imageInput" accept="image/*" />
+                                    <span class="file-name" id="fileName">No file chosen</span>
+                                    <br>
+                                </div>
+                        </div>
+                        <p id="canvas-upload-container-heading" class="section-heading canvas-upload-container-heading">Image Uploaded</p>
+                        <div id="canvas-upload-container" class="canvas-upload-container">
+                            <!-- <div id="canvas-container" class="canvas-container" style="flex-direction: column; align-items: center;"> -->
+                            <canvas id="canvas-upload"></canvas>
+                        </div>
+                    <!-- ✅🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️ -->
+                </section>
+                <section id="section3" class="section3 section-googleAPIs">
+                    <!-- 📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌 -->
+                    <!-- address -->
+                    <input id="section3-focus-on-activation" style="position:fixed;left:-5000px;" tabindex="-1">
+                    <p class="section-heading">Address</p>
+                    <div class="autocomplete-address-container">
+                        <input id="googlePlacesAPIautocomplete_0" class="autocomplete-address-input" type="text" placeholder="Enter address here...">
+                    </div>
+                    <div id="map-container" class="map-container">
+                        <button id="close-map" class="close-map-btn" >Close Map</button>
+                        <div id="map" class="map"></div>
+                    </div>
+                    <!-- 📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌 -->
+                </section>
+                <section id="section4" class="section4 section-note">
+                    <!-- 📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️ -->
+                    <!-- note -->
+                    <input id="section4-focus-on-activation" style="position:fixed;left:-5000px;" tabindex="-1">
+                    <p class="section-heading">Note</p>
+                    <p id="note-date-time">&nbsp</p>
+                    <p id="note-address">&nbsp</p>
+                    <textarea id="tinymce_0" class="tinymce-editor"></textarea>
+                    <!-- 📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️📝🖋️ -->
+                </section>
+                <section id="section5" class="section5 section-save">
+                    <!-- 💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾 -->
+                    <!-- save -->
+                    <input id="section5-focus-on-activation" style="position:fixed;left:-5000px;" tabindex="-1">
+                    <p class="section-heading">Review and Save</p>
+                    <p><b><u>Address:-</u></b></p>
+                    <div id="save_address" class="save-address"></div>
+                    <br>
+                    <p><b><u>Note:-</u></b></p>
+                    <div id="save_note_0" class="save-note_0 tinymce-textarea"></div>
+                    <br>
+                    <p><b><u>Photo:-</u></b></p>
+                    <div id="canvas-container-II" class="save-canvas" style="flex-direction: column; align-items: center;">
+                        <canvas id="canvasII"></canvas>
+                    </div>
+                    <button class="std-btn mapped-event" data-action="insertFormDataRecord">ADD NEW: Photo, Address & Note.</button>
+                    <!-- 💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾💾 -->
+                </section>
+                <section id="section6" class="section6 section-search">
+                    <!-- 🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍 -->
+                    <!-- search -->
+                    <input id="section6-focus-on-activation" style="position:fixed;left:-5000px;" tabindex="-1">
+                    <p class="section-heading">Search</p>
+                    <form id="search-criteria" class="search-criteria">
+                        <span>Search by:</span>
+                        <label>
+                            <input type="radio" name="searchOption" data-action="searchByAddress" value="address" />
+                            Part of an address
+                        </label>
+                        <label>
+                            <input type="radio" name="searchOption" data-action="searchByNote" value="note" />
+                            Part of a note
+                        </label>
+                        <label>
+                            <input type="radio" name="searchOption" data-action="searchByDate" value="date" />
+                            Date
+                        </label>
+                    </form>
+                    <div class="search-container">
+                        <input id="search-input" class="search-input" type="text" placeholder="Enter search term...">
+                        <div style="text-align: center;">
+                            <button id="search-button" class="std-btn">Search</button>
+                        </div>
+                    </div>
+                    <div id="search-results" class="search-results">
+                        <p class="section-heading">Search Results</p>
+                        <ul id="filteredList-container">
+                            <!-- Search results will be dynamically populated here -->
+                        </ul>
+                    </div>
+                    <!-- 🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍 -->
+                </section>
+
+    </main>
+
+    <footer>
+        <div id="footer-controls-container" class="footer-controls-container">
+            <img id="footer-control-home" src="/_Home.png" class="footer-control" data-section-number="0">
+            <!-- <img id="footer-control-menu" src="/_Menu.png" class="footer-control" data-section-number="1"> -->
+            <img id="footer-control-camera" src="/_Camera.png" class="footer-control" data-section-number="2">
+            <img id="footer-control-address" src="/_Address.png" class="footer-control" data-section-number="3">
+            <img id="footer-control-notes" src="/_Note.png" class="footer-control" data-section-number="4">
+            <img id="footer-control-save" src="/_Save.png" class="footer-control" data-section-number="5">
+            <img id="footer-control-search" src="/_Search.png" class="footer-control" data-section-number="6">
+        </div>
+    </footer>
+    <script>
+        // section focus and switch START
+            function focusInput(sectionId) {
+                const input = document.querySelector(`#section${sectionId}-focus-on-activation`);
+                input?.focus();
+            }
+            function switchSection(index) {
+                console.log(current,index);
+                if (index === current) return;
+                const currentSection = document.getElementById(`section${current}`);
+                console.log(currentSection);
+                const nextSection = document.getElementById(`section${index}`);
+                currentSection.classList.remove('active');
+                setTimeout(() => {
+                    nextSection.classList.add('active');
+                    console.log(nextSection);
+                    current = index;
+                    focusInput(index);
+                    localStorage.setItem("tas_sectionNumber",index);
+                }, 250); // Matches the CSS transition duration of 0.25s
+            }
+            document.getElementById("footer-controls-container").addEventListener("click",(ev) => {
+                const sectionNumber = ev.target.getAttribute("data-section-number");
+                switchSection(sectionNumber);
+            });
+            // set current section = last active section START
+                let current = localStorage.getItem("tas_sectionNumber")? localStorage.getItem("tas_sectionNumber") : 0; // start-up at last active section
+                const el = document.getElementById(`section${current}`);
+                el.classList.add("active");
+                switchSection(current); // ensure last active section is viewable
+                focusInput(current); // set focus to active section
+            // set current section = last active section END
+            // set last session values START
+                const address = localStorage.getItem("tas_address")? localStorage.getItem("tas_address") : "";
+                document.getElementById("googlePlacesAPIautocomplete_0").value = address;
+                console.log(address);
+        // section focus and switch END
+        // re-load START
+            // // if (!window.location.search.includes("reload=true")) {
+            // //     window.location.href = window.location.pathname + "?reload=true";
+            // // }
+            // if (!window.location.search.includes("reload=true")) {
+            //     const separator = window.location.search ? '&' : '?';
+            //     const newUrl = window.location.pathname + window.location.search + separator + "reload=true";
+            //     window.location.replace(newUrl); // prevents back button loop
+            //     console.log("11111111111111111111111111111 Page reloaded with ?reload=true");
+            // }
+            // // Page loads normally
+            // // Browser sees reload=true is missing
+            // // Redirects to the same page with ?reload=true
+            // // IMPORTANT BIT... Server sees it and clears the session
+            // // // Only run if the page was loaded with ?reload=true START
+            // //     // Clears "reload=true" from the URL
+            // //     setTimeout(() => {                    
+            // //         if (window.location.search.includes('reload=true')) {
+            // //             // Replace the current URL with the same path but without the query string
+            // //             const newUrl = window.location.pathname;
+            // //             window.history.replaceState({}, '', newUrl);
+            // //             console.log("22222222222222222222222222 Page reloaded and URL cleaned up");
+            // //         }
+            // //     }, 2000);
+            // // // Only run if the page was loaded with ?reload=true END
+            // Only clear session once
+            const cleared = sessionStorage.getItem('sessionCleared');            
+            if (!cleared) {
+                console.log('✅ Session reset commenced');
+                fetch('/session-reset?reload=true', {
+                    method: 'GET',
+                    // credentials: 'same-origin' // Send credentials only if the request URL is on the same origin (same scheme, host, and port) as the calling script.
+                    credentials: 'include'// Always send credentials, even for cross-origin requests (if CORS allows it).
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('✅ Session reset successful');
+                        sessionStorage.setItem('sessionCleared', 'true');
+                        // optionally redirect or update UI
+                    } else {
+                        console.warn('⚠️ Session reset failed:', data.message);
+                    }
+                })
+                .catch(err => {
+                    console.error('🚨 Session reset request failed:', err);
+                });
+            }
+        // re-load END
+    </script>
+</body>
+</html>

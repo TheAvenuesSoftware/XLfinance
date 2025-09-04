@@ -1,0 +1,22 @@
+// 1 navigate to the folder that contains this _myFilename_.scss file
+// 2 open terminal
+// 3 npx sass --watch _myFilename_.scss:_myFilename_.css
+
+// - Class & ID Names: Use kebab-case (e.g., .main-container, #header-nav)
+// - Variables (SCSS): Use $kebab-case (e.g., $primary-color)
+// - Mixins & Functions: Often use camelCase or PascalCase (e.g., @mixin flexCenter)
+// - BEM Methodology (Block Element Modifier): Uses block__element--modifier (e.g., .button__icon--large)
+
+@import "global";
+// @import "projectMenu";
+
+// * {
+//     // font-family: "Consolas", "Courier New", monospace;
+//     font-family: 'Roboto', sans-serif;
+// }
+
+// input{
+//     color:darkblue;
+//     // background-color: palegoldenrod;
+//     background: var(--std-bckgrnd);
+// }

@@ -1,0 +1,16 @@
+{
+    "workbench.colorTheme": "Default Dark Modern",
+    "workbench.colorCustomizations": {        
+        "activityBar.background":"#0222bf",
+        "activityBar.foreground": "#0222bf",
+        "activityBar.inactiveForeground":"rgb(255,255,255)",
+        "activityBar.activeBackground":"#fdfcfc",
+        "sideBar.foreground":"#fdfcfc",
+        "sideBar.background":"#0222bf",
+        "statusBar.background":"#0222bf",
+        "tab.activeForeground":"#fdfcfc",
+        "tab.activeBackground":"#0222bf",
+        "titleBar.activeBackground":"#0222bf",
+        "titleBar.inactiveBackground":"#0222bf"
+    }
+}
