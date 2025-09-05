@@ -56,12 +56,14 @@ $base-padding: 16px;
 
     --off-screen-left:-5000px;
 
-    --header-bckgrnd: rgb(67, 248, 67);
-    --footer-bckgrnd: rgb(67, 248, 67);
+    --header-bckgrnd: rgb(3, 122, 104);
+    --footer-bckgrnd: rgb(3, 122, 104);
+    // --footer-bckgrnd: deepskyblue;
 
     color:goldenrod;
     color:rgba(8, 200, 8, 0.4);
     color:rgb(67, 248, 67);
+    color:deepskyblue;
 }
 
 body {

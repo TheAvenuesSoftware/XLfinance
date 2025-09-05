@@ -29,6 +29,7 @@ export function globalClientJSisLoaded(){
 
             await new Promise(resolve => setTimeout(resolve, 500)); // Simulated async process
             await doAfterDOMandWindowLoad__global_ClientMJS();
+            detectDarkLightMode();
 
         });
         // 2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣ END
@@ -614,3 +615,29 @@ function logAllEvents(target = document.body) {
         }
     }
 //  isEmailValid() END
+
+// Detect dark mode preference START
+    function detectDarkLightMode(){
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        // if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        //     console.log('Dark mode is enabled.  isDark =',isDark);
+        // } else {
+        //     console.log('Light mode is enabled.  isDark =',isDark);
+        // }
+        const favicon = document.getElementById('favicon');
+        favicon.href = isDark ? './favicon_darkMode.png' : './favicon_lightMode.png';
+        const appleTouchIcon = document.getElementById('apple-touch-icon');
+        appleTouchIcon.href = isDark ? './favicon_darkMode.png' : './favicon_lightMode.png';
+        // long-hand START
+            // if(isDark===true){
+            //     console.log('Dark mode is enabled.  isDark =',isDark);
+            //     favicon.href = './favicon_darkMode.png';
+            //     appleTouchIcon.href = './favicon_darkMode.png';
+            // }else{
+            //     console.log('Dark mode is NOT enabled.  isDark =',isDark);
+            //     favicon.href = './favicon_lightMode.png';
+            //     appleTouchIcon.href = './favicon_lightMode.png';
+            // }
+        // long-hand END
+    }
+// Detect dark mode preference END

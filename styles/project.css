@@ -16,11 +16,12 @@
   --std-input-color:darkblue;
   --std-input-bckgrnd:palegoldenrod;
   --off-screen-left:-5000px;
-  --header-bckgrnd: rgb(67, 248, 67);
-  --footer-bckgrnd: rgb(67, 248, 67);
+  --header-bckgrnd: rgb(3, 122, 104);
+  --footer-bckgrnd: rgb(3, 122, 104);
   color: goldenrod;
   color: rgba(8, 200, 8, 0.4);
   color: rgb(67, 248, 67);
+  color: deepskyblue;
 }
 
 body {
@@ -237,9 +238,6 @@ body {
   justify-content: center;
   align-items: center;
   z-index: 4;
-  /* The animated dots */
-  /* Use animation delay to stagger movement */
-  /* Keyframes for bounce effect */
 }
 .busy-animation-overlay .container {
   display: flex;
@@ -254,6 +252,9 @@ body {
   text-align: center;
   z-index: 5;
 }
+.busy-animation-overlay {
+  /* The animated dots */
+}
 .busy-animation-overlay .dot {
   width: 12px;
   height: 12px;
@@ -261,6 +262,9 @@ body {
   border-radius: 50%;
   animation: bounce 1.5s infinite ease-in-out;
   z-index: 5;
+}
+.busy-animation-overlay {
+  /* Use animation delay to stagger movement */
 }
 .busy-animation-overlay .dot:nth-child(1) {
   animation-delay: 0s;
@@ -270,6 +274,9 @@ body {
 }
 .busy-animation-overlay .dot:nth-child(3) {
   animation-delay: 0.4s;
+}
+.busy-animation-overlay {
+  /* Keyframes for bounce effect */
 }
 @keyframes bounce {
   0%, 80%, 100% {
