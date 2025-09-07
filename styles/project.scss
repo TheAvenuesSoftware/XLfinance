@@ -20,3 +20,77 @@
 //     // background-color: palegoldenrod;
 //     background: var(--std-bckgrnd);
 // }
+
+    // body {
+    //   font-family: sans-serif;
+    //   padding: 2rem;
+    // }
+    input[type="file"] {
+      margin-bottom: 1rem;
+    }
+    pre {
+        background: #f4f4f4;
+        padding: 1rem;
+        border-radius: 4px;
+        max-height: 400px;
+        overflow: auto;
+    }
+    // Default: show table, hide cards START
+        #mobile-card-container {
+            display: none;
+        }
+        #desktop-table-container {
+            display: block;
+        }
+    // Default: show table, hide cards END
+    // On mobile: show cards, hide table START
+        @media screen and (max-width: 768px) {
+            #mobile-card-container {
+                display: block;
+            }
+            #desktop-table-container {
+                display: none;
+            }
+        }
+    // On mobile: show cards, hide table END
+    // transactions table START
+        #transactionsTable th,
+        #transactionsTable td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        #transactionsTable tr:hover {
+            background-color: #f1f1f1;
+        }
+    // transactions table END
+    // collapsible container START
+        details {
+            margin: 1em 0;
+            margin: 5px 0;
+            padding: 1em;
+            padding: 2.5px;
+            border: 1px solid #ccc;
+            border: 1px solid rgb(3, 122, 104);
+            border-radius: 5px;
+            summary {
+                // font-size: 1.2em;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            input {
+                // margin-bottom: 0.8em;
+                // margin-bottom: 5px;
+                display: block;
+                width: 100%;
+                max-width: 400px;
+            }
+            label {
+                // display: block;
+                // margin-top: 1em;
+                // margin-top: 5px;
+            }
+        }
+    // collapsible container END

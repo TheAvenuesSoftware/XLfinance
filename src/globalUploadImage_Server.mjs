@@ -6,7 +6,7 @@ const fs = require("fs");
 const exifParser = require("exif-parser");
 const sizeOf = require("image-size");
 
-npm install multer exif-parser image-size
+// npm install multer exif-parser image-size
 
 // Setup SQLite
     const db = new sqlite3.Database("images.db");

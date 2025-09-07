@@ -641,3 +641,35 @@ function logAllEvents(target = document.body) {
         // long-hand END
     }
 // Detect dark mode preference END
+
+// parse text date depending on known format d/m/y OR m/d/y START
+    export function parseDate(rawDate, format = "d/m/y") {
+        if (!rawDate || typeof rawDate !== "string") return null;
+
+        const parts = rawDate.split(/[\/\-.]/); // Supports /, -, or . as separators
+        let day, month, year;
+
+        switch (format) {
+            case "d/m/y":
+                [day, month, year] = parts;
+                break;
+            case "m/d/y":
+                [month, day, year] = parts;
+                break;
+            case "y/m/d":
+                [year, month, day] = parts;
+                break;
+            default:
+                console.warn("Unknown date format. Using raw date.");
+                return new Date(rawDate);
+        }
+
+        // Zero-pad month/day if needed and convert to numbers
+        const d = parseInt(day, 10);
+        const m = parseInt(month, 10) - 1; // JavaScript months are 0-indexed
+        const y = parseInt(year, 10);
+
+        const date = new Date(y, m, d);
+        return isNaN(date.getTime()) ? null : date;
+    }
+// parse text date depending on known format d/m/y OR m/d/y START

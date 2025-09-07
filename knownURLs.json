@@ -18,6 +18,7 @@
         "/global_Client_Dimensions.mjs",
         "/globalConfig_Client.mjs",
         "/projectConfig_Client.mjs",
+        "/XLfinance_CBA_Client.mjs",
         "/__padlock_locked.png",
         "/__padlock_unlocked.png",
         "/_Home.png",

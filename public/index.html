@@ -93,6 +93,7 @@
 
     <script type="module" src="./global_Client.mjs"></script>
     <script type="module" src="./project_Client.mjs"></script>
+    <script type="module" src="./XLfinance_CBA_Client.mjs"></script>
     <!-- <script type="module" src="./projectCamera_Client.mjs"></script> -->
     <!-- TinyMCE start -->
         <!-- <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script> -->
@@ -100,10 +101,10 @@
             <!-- <script src="/tinymce/tinymce.min.js"></script> -->
          <!-- .....\node_modules\tinymce -->
     <!-- TinyMCE end -->
-    <script type="module" src="./projectTinyMCE_Client.mjs"></script>
+    <!-- <script type="module" src="./projectTinyMCE_Client.mjs"></script> -->
     <!-- <script type="module" src="./projectMenu_Client.mjs"></script> -->
     <script type="module" src="./globalUIpopups_Client.mjs"></script>
-    <script type="module" src="./globalUploadImage_Client.mjs"></script>
+    <!-- <script type="module" src="./globalUploadImage_Client.mjs"></script> -->
     
     <!-- <script type="module" src="./global_Client_Dimensions.mjs"></script> -->
 
@@ -275,530 +276,127 @@
                     <!-- 🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡🏡 -->
                 </section>
                 <section id="section1" class="section1 section-uploads">
-                    <!-- 🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒 -->
-                    <!-- menu -->
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 2rem;
-    }
-    input[type="file"] {
-      margin-bottom: 1rem;
-    }
-    pre {
-      background: #f4f4f4;
-      padding: 1rem;
-      border-radius: 4px;
-      max-height: 400px;
-      overflow: auto;
-    }
-    /* Default: show table, hide cards */
-        #mobile-card-container {
-            display: none;
-        }
-        #desktop-table-container {
-            display: block;
-        }
-    /* On mobile: show cards, hide table */
-        @media screen and (max-width: 768px) {
-            #mobile-card-container {
-                display: block;
-            }
-            #desktop-table-container {
-                display: none;
-            }
-        }
-
-#transactionsTable th,
-#transactionsTable td {
-  padding: 8px;
-  text-align: left;
-  border: 1px solid #ddd;
-  font-size: 14px;
-}
-
-#transactionsTable tr:hover {
-  background-color: #f1f1f1;
-}
-
-  </style>
-    <h1>Upload CSV File</h1>
-
-    <label for="accountEmail">Account Email Address:</label>
-    <input type="text" id="accountEmail" placeholder="me@email.com" required />
-    <label for="portfolioId">Portfolio ID:</label>
-    <input type="text" id="portfolioId" placeholder="e.g. ACC-12345" required />
-    <label for="portfolioName">Account Name:</label>
-    <input type="text" id="portfolioName" placeholder="e.g. Primary Investment" required />
-    <br>
-    <input type="file" id="csvFileInput" accept=".csv" style="display:none" />
-    <label for="csvFileInput" id="customUploadButton" style="cursor: pointer;"><button type="button">📤 Upload new transactions, choose file.</button></label>
-    <!--
-        The <pre> tag is used to display text exactly as it is written in the HTML source, preserving:
-        -   Whitespace (spaces and tabs)
-        -   Line breaks
-        -   Monospaced font (by default) 
-        -->
-        <!-- document.getElementById('output').innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`; -->
-        <pre id="output" style="display:none"></pre> 
-    <!--  -->
-
-    <br>
-    <button id="saveButton">💾 Append to existing file / Create new file.</button>
-    <br>
-
-    <div id="desktop-table-container">
-        <!-- Your desktop table here -->
-    </div>
-
-    <div id="mobile-card-container">
-        <!-- Cards rendered here via JS -->
-    </div>
-
-    <input type="text" id="tableFilter" placeholder="Filter transactions..." style="margin-bottom: 10px; padding: 5px; width: 100%; max-width: 400px;" />
-    <div id="desktop-table-container" style="overflow-x: auto; max-height: 80vh;"></div>
-
-  <script>
-
-        if (!window.showSaveFilePicker || !window.showOpenFilePicker) {
-        alert("Your browser doesn't support the File System Access API.");
-        }
-
-        function renderTransactions(data) {
-            const isMobile = window.innerWidth < 768;
-            if (isMobile) {
-                document.getElementById('desktop-table-container').style.display = 'none';
-                document.getElementById('mobile-card-container').style.display = 'block';
-                renderCards(data);
-            } else {
-                document.getElementById('mobile-card-container').style.display = 'none';
-                document.getElementById('desktop-table-container').style.display = 'block';
-                renderTable(data);
-            }
-        }
-
-    // function parseTransactions(csvText) {
-    //   const lines = csvText.trim().split('\n');
-    //   const headers = lines[0].split(',').map(h => h.trim());
-    // 
-    //   return lines.slice(1).map(line => {
-    //     const values = line.split(',').map(v => v.trim());
-    //     const row = Object.fromEntries(headers.map((h, i) => [h, values[i] || '']));
-    // 
-    //     const result = {
-    //       Date: row.Date,
-    //       Reference: row.Reference,
-    //       Debit: row["Debit($)"],
-    //       Credit: row["Credit($)"],
-    //       Balance: row["Balance($)"]
-    //     };
-    // 
-    //     const details = row.Details;
-    // 
-    //     // B or S transaction
-    //     if (/^[BS]\s+\d+/.test(details)) {
-    //       const [trxType, trxQty, trxTicker, atSymbol, trxUnitAmount] = details.split(/\s+/);
-    //       Object.assign(result, {
-    //         trxType,
-    //         trxQty,
-    //         trxTicker,
-    //         trx: atSymbol,
-    //         trxUnitAmount
-    //       });
-    //     }
-    //     // Payee
-    //     else if (/Payee/i.test(details)) {
-    //       const match = details.match(/Payee\s+(.*)/i);
-    //       result.Payee = match ? match[1].trim() : '';
-    //     }
-    //     // Drawer
-    //     else if (/Drawer/i.test(details)) {
-    //       const match = details.match(/Drawer\s+(.*)/i);
-    //       result.Drawer = match ? match[1].trim() : '';
-    //     }
-    //     // Fallback
-    //     else {
-    //       result.Details = details;
-    //     }
-    // 
-    //     return result;
-    //   });
-    // }
-
-    // function parseTransactions(csvText) {
-    // const lines = csvText.trim().split('\n');
-    // const headers = lines[0].split(',').map(h => h.trim());
-    // 
-    // return lines.slice(1).map(line => {
-    //     const values = line.split(',').map(v => v.trim());
-    //     const row = Object.fromEntries(headers.map((h, i) => [h, values[i] || '']));
-    // 
-    //     const result = {
-    //     Date: row.Date,
-    //     Reference: row.Reference,
-    //     Debit: row["Debit($)"],
-    //     Credit: row["Credit($)"],
-    //     Balance: row["Balance($)"]
-    //     };
-    // 
-    //     const details = row.Details;
-    // 
-    //     // 1. B or S transactions
-    //     if (/^[BS]\s+\d+/.test(details)) {
-    //     const [trxType, trxQty, trxTicker, atSymbol, trxUnitAmount] = details.split(/\s+/);
-    //     Object.assign(result, {
-    //         trxType,
-    //         trxQty,
-    //         trxTicker,
-    //         trx: atSymbol,
-    //         trxUnitAmount
-    //     });
-    //     }
-    // 
-    //     // 2. Drawer
-    //     else if (/Drawer/i.test(details)) {
-    //     const match = details.match(/Drawer\s+(.*)/i);
-    //     result.Drawer = match ? match[1].trim() : '';
-    //     result.trxType = 'R';
-    //     }
-    // 
-    //     // 3. Payee
-    //     else if (/Payee/i.test(details)) {
-    //     const match = details.match(/Payee\s+(.*)/i);
-    //     result.Payee = match ? match[1].trim() : '';
-    //     result.trxType = 'P';
-    //     }
-    // 
-    //     // 4. Reference starts with J
-    //     else if (/^J/i.test(row.Reference)) {
-    //     result.trxType = 'J';
-    //     result.Details = details;
-    //     }
-    // 
-    //     // 5. Fallback
-    //     else {
-    //     result.Details = details;
-    //     }
-    // 
-    //     return result;
-    // });
-    // }
-    // 
-    // document.getElementById('csvFileInput').addEventListener('change', function(event) {
-    //   const file = event.target.files[0];
-    //   if (!file) return;
-    // 
-    //   const reader = new FileReader();
-    // 
-    //   reader.onload = function(e) {
-    //     const csvText = e.target.result;
-    //     const parsedData = parseTransactions(csvText);
-    //     document.getElementById('output').textContent = JSON.stringify(parsedData, null, 2);
-    //     console.log("Parsed JSON:", parsedData);
-    //   };
-    // 
-    //   reader.readAsText(file);
-    // });
-
-    function parseTransactions(csvText, accountEmail, portfolioId, portfolioName) {
-      const lines = csvText.trim().split('\n');
-      const headers = lines[0].split(',').map(h => h.trim());
-
-      return lines.slice(1).map(line => {
-        const values = line.split(',').map(v => v.trim());
-        const row = Object.fromEntries(headers.map((h, i) => [h, values[i] || '']));
-
-        const details = row.Details;
-
-        // Start with accountEmail/portfolioId/portfolioName at beginning
-        const result = {
-          accountEmail: accountEmail,
-          portfolioId: portfolioId,
-          portfolioName: portfolioName,
-          original: line,
-          Date: row.Date,
-          Reference: row.Reference,
-          Debit: row["Debit($)"],
-          Credit: row["Credit($)"],
-          Balance: row["Balance($)"]
-        };
-
-        // 1. B or S transaction
-        if (/^[BS]\s+\d+/.test(details)) {
-          const [trxType, trxQty, trxTicker, atSymbol, trxUnitAmount] = details.split(/\s+/);
-          Object.assign(result, {
-            trxType,
-            trxQty,
-            trxTicker,
-            trx: atSymbol,
-            trxUnitAmount,
-            Brokerage_inclGST: Math.abs(( trxQty * trxUnitAmount - row["Credit($)"] - row["Debit($)"] )).toFixed(2),
-            GST: Math.abs((( trxQty * trxUnitAmount - row["Credit($)"] - row["Debit($)"] )) / 11).toFixed(2)
-          });
-        }
-        // 2. Drawer
-        else if (/Drawer/i.test(details)) {
-          const match = details.match(/Drawer\s+(.*)/i);
-          result.Drawer = match ? match[1].trim() : '';
-          result.trxType = 'R';
-        }
-        // 3. Payee
-        else if (/Payee/i.test(details)) {
-          const match = details.match(/Payee\s+(.*)/i);
-          result.Payee = match ? match[1].trim() : '';
-          result.trxType = 'P';
-        }
-        // 4. Reference starts with J
-        else if (/^J/i.test(row.Reference)) {
-          result.trxType = 'J';
-          result.Details = details;
-        }
-        // 5. Fallback
-        else {
-          result.Details = details;
-        }
-
-        return result;
-      });
-    }
-
-    document.getElementById('csvFileInput').addEventListener('change', function (event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const accountEmail = document.getElementById('accountEmail').value.trim();
-      const portfolioId = document.getElementById('portfolioId').value.trim();
-      const portfolioName = document.getElementById('portfolioName').value.trim();
-
-      if (!accountEmail || !portfolioId || !portfolioName) {
-        alert("Please enter: Account Email Address; Portfolio ID and Account Name before uploading.");
-        return;
-      }
-
-      const reader = new FileReader();
-
-      reader.onload = function (e) {
-        const csvText = e.target.result;
-        const parsedData = parseTransactions(csvText, accountEmail, portfolioId, portfolioName);
-        // document.getElementById('output').textContent = JSON.stringify(parsedData, null, 2); // renders raw json of imported csv file
-        renderTransactions(parsedData);
-        console.log("Parsed JSON:", parsedData);
-        window.localStorage.setItem("XLfinance_parsedData",JSON.stringify(parsedData));
-      };
-
-      reader.readAsText(file);
-    });
-
-    // desktop display START
-        // 💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻
-            // function renderTable(data) {
-            // const container = document.getElementById('desktop-table-container');
-            // container.innerHTML = `
-            //     <table border="1" style="width: 100%; border-collapse: collapse;">
-            //     <thead>
-            //         <tr>
-            //         <th>Date</th>
-            //         <th>Reference</th>
-            //         <th>Type</th>
-            //         <th>Qty</th>
-            //         <th>Ticker</th>
-            //         <th>Unit Amount</th>
-            //         <th>Debit</th>
-            //         <th>Credit</th>
-            //         <th>Balance</th>
-            //         <th>Payee</th>
-            //         <th>Drawer</th>
-            //         </tr>
-            //     </thead>
-            //     <tbody id="transactionsBody"></tbody>
-            //     </table>
-            // `;
-            // 
-            // const tbody = container.querySelector('#transactionsBody');
-            // data.forEach(txn => {
-            //     const tr = document.createElement('tr');
-            //     tr.innerHTML = `
-            //     <td>${txn.Date || ''}</td>
-            //     <td>${txn.Reference || ''}</td>
-            //     <td>${txn.trxType || ''}</td>
-            //     <td>${txn.trxQty || ''}</td>
-            //     <td>${txn.trxTicker || ''}</td>
-            //     <td>${txn.trxUnitAmount || ''}</td>
-            //     <td>${txn.Debit || ''}</td>
-            //     <td>${txn.Credit || ''}</td>
-            //     <td>${txn.Balance || ''}</td>
-            //     <td>${txn.Payee || ''}</td>
-            //     <td>${txn.Drawer || ''}</td>
-            //     `;
-            //     tbody.appendChild(tr);
-            // });
-            // }
-            function renderTable(data) {
-            const container = document.getElementById('desktop-table-container');
-            container.innerHTML = '';
-
-            const table = document.createElement('table');
-            table.id = 'transactionsTable';
-            table.style.cssText = `
-                width: 100%;
-                border-collapse: collapse;
-            `;
-
-            const thead = document.createElement('thead');
-            const tbody = document.createElement('tbody');
-            tbody.id = 'transactionsBody';
-
-            const headers = [
-                "Date", "Reference", "Type", "Qty", "Ticker", "Unit Amount",
-                "Debit", "Credit", "Balance", "Brokerage_inclGST", "GST", "Payee", "Drawer"
-            ];
-
-            // Create header row
-            const headerRow = document.createElement('tr');
-            headers.forEach((h, idx) => {
-                const th = document.createElement('th');
-                th.textContent = h;
-                th.style.cssText = `
-                position: sticky;
-                top: 0;
-                background: #f2f2f2;
-                padding: 8px;
-                border-bottom: 2px solid #999;
-                cursor: pointer;
-                `;
-                th.dataset.index = idx;
-                th.addEventListener('click', () => sortTableByColumn(idx));
-                headerRow.appendChild(th);
-            });
-            thead.appendChild(headerRow);
-            table.appendChild(thead);
-            table.appendChild(tbody);
-            container.appendChild(table);
-
-            populateTable(data);
-
-            // Filter listener
-            const filterInput = document.getElementById('tableFilter');
-            filterInput.addEventListener('input', () => {
-                const filterValue = filterInput.value.toLowerCase();
-                const filtered = data.filter(txn =>
-                Object.values(txn).some(val => String(val).toLowerCase().includes(filterValue))
-                );
-                populateTable(filtered);
-            });
-
-            function populateTable(rows) {
-                tbody.innerHTML = '';
-                rows.forEach(txn => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${txn.Date || ''}</td>
-                    <td>${txn.Reference || ''}</td>
-                    <td>${txn.trxType || ''}</td>
-                    <td>${txn.trxQty || ''}</td>
-                    <td>${txn.trxTicker || ''}</td>
-                    <td>${txn.trxUnitAmount || ''}</td>
-                    <td>${txn.Debit || ''}</td>
-                    <td>${txn.Credit || ''}</td>
-                    <td>${txn.Balance || ''}</td>
-                    <td>${txn.Brokerage_inclGST || ''}</td>
-                    <td>${txn.GST || ''}</td>
-                    <td>${txn.Payee || ''}</td>
-                    <td>${txn.Drawer || ''}</td>
-                `;
-                tbody.appendChild(tr);
-                });
-            }
-
-            // Basic sort handler
-            function sortTableByColumn(columnIndex) {
-                let ascending = table.dataset.sortDir !== 'asc';
-                table.dataset.sortDir = ascending ? 'asc' : 'desc';
-
-                const sorted = [...data].sort((a, b) => {
-                const valA = Object.values(a)[columnIndex] || '';
-                const valB = Object.values(b)[columnIndex] || '';
-
-                const numA = parseFloat(valA);
-                const numB = parseFloat(valB);
-
-                if (!isNaN(numA) && !isNaN(numB)) {
-                    return ascending ? numA - numB : numB - numA;
-                }
-
-                return ascending
-                    ? String(valA).localeCompare(String(valB))
-                    : String(valB).localeCompare(String(valA));
-                });
-
-                populateTable(sorted);
-            }
-            }
-        // 💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻💻
-    // desktop display END
-
-    // mobile display START
-        // 📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱
-            function renderCards(data) {
-            const container = document.getElementById('mobile-card-container');
-            container.innerHTML = '';
-
-            data.forEach(txn => {
-                const card = document.createElement('div');
-                card.style.cssText = `
-                border: 1px solid #ccc;
-                border-radius: 8px;
-                margin: 10px 0;
-                padding: 10px;
-                background-color: #f9f9f9;
-                `;
-
-                card.innerHTML = `
-                <strong>Date:</strong> ${txn.Date || ''}<br>
-                <strong>Reference:</strong> ${txn.Reference || ''}<br>
-                <strong>Type:</strong> ${txn.trxType || ''}<br>
-                ${txn.trxQty ? `<strong>Qty:</strong> ${txn.trxQty}<br>` : ''}
-                ${txn.trxTicker ? `<strong>Ticker:</strong> ${txn.trxTicker}<br>` : ''}
-                ${txn.trxUnitAmount ? `<strong>Unit Amount:</strong> ${txn.trxUnitAmount}<br>` : ''}
-                ${txn.Payee ? `<strong>Payee:</strong> ${txn.Payee}<br>` : ''}
-                ${txn.Drawer ? `<strong>Drawer:</strong> ${txn.Drawer}<br>` : ''}
-                <strong>Debit:</strong> ${txn.Debit || ''}<br>
-                <strong>Credit:</strong> ${txn.Credit || ''}<br>
-                <strong>Balance:</strong> ${txn.Balance || ''}<br>
-                `;
-                container.appendChild(card);
-            });
-            }
-        // 📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱📱
-    // mobile display END
-
-</script>
-</body>
-</html>
-
-                    <!-- 🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒 -->
-                </section>
-                <section id="section2" class="section2 section-open">
+                    <!-- 📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤 -->
+                    <!-- uploads -->
+                        <!-- <h1>Upload CSV File</h1>
                         <label for="accountEmail">Account Email Address:</label>
-                        <input type="text" id="accountEmail" placeholder="me@email.com" required />
+                        <input type="text" id="accountEmail" data-action="validateEmailAddress" placeholder="e.g. yourname@email.com" required />
+                        <br>
                         <label for="portfolioId">Portfolio ID:</label>
                         <input type="text" id="portfolioId" placeholder="e.g. ACC-12345" required />
+                        <br>
                         <label for="portfolioName">Account Name:</label>
                         <input type="text" id="portfolioName" placeholder="e.g. Primary Investment" required />
+                        <br>
+                        <label for="portfolioGSTrate">GST rate:</label>
+                        <input type="text" id="portfolioGSTrate" placeholder="e.g. 10" required />
+                        <br>
+                        <label for="portfolioFXrate">FX rate:</label>
+                        <input type="text" id="portfolioFXrate" placeholder="e.g. 1" required />
+                        <br> -->
+                        <!-- collapsible container START -->
+                            <details>
+                                <summary><h1>Upload CSV File</h1></summary>
+                                <label for="accountEmail">Account Email Address:</label>
+                                <input
+                                    type="text"
+                                    id="accountEmail"
+                                    data-action="validateEmailAddress"
+                                    placeholder="e.g. yourname@email.com"
+                                    required
+                                />
+                                <br />
+                                <label for="portfolioId">Portfolio ID:</label>
+                                <input
+                                    type="text"
+                                    id="portfolioId"
+                                    placeholder="e.g. ACC-12345"
+                                    required
+                                />
+                                <br />
+                                <label for="portfolioName">Account Name:</label>
+                                <input
+                                    type="text"
+                                    id="portfolioName"
+                                    placeholder="e.g. Primary Investment"
+                                    required
+                                />
+                                <br />
+                                <label for="portfolioGSTrate">GST rate:</label>
+                                <input
+                                    type="text"
+                                    id="portfolioGSTrate"
+                                    placeholder="e.g. 10"
+                                    required
+                                />
+                                <br />
+                                <label for="portfolioFXrate">FX rate:</label>
+                                <input
+                                    type="text"
+                                    id="portfolioFXrate"
+                                    placeholder="e.g. 1"
+                                    required
+                                />
+                                <br />
+                            </details>
+                        <!-- collapsible container END -->
 
-                        <button id="openButton">📂 Open file</button>
-                        <pre id="loadedFileContent" style="display:none"></pre>
-
-                        <div id="desktop-table-container">
+                        <!-- file selection START -->
+                            <label for="csvFileInput" id="customUploadButton" style="cursor: pointer;">
+                                📤 Upload new transactions.
+                            </label>
+                            <!-- <label for="csvFileInput" id="customUploadButton" style="cursor: pointer;">
+                                <button type="button" data-action="selectFileForUpload">
+                                    📤 Upload new transactions, choose file.
+                                </button>
+                            </label> -->
+                            <input type="file" id="csvFileInput" data-action="selectFileForUpload" accept=".csv" />
+                        <!-- file selection END -->
+                        <!--
+                            The <pre> tag is used to display text exactly as it is written in the HTML source, preserving:
+                            -   Whitespace (spaces and tabs)
+                            -   Line breaks
+                            -   Monospaced font (by default) 
+                            -->
+                            <!-- document.getElementById('output').innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`; -->
+                            <pre id="output" style="display:x_none"></pre> 
+                        <!--  -->
+                        <br>
+                        <label>💾 Add these records to your file?</label>
+                        <button id="saveButton" data-action="appendUploadedRecords">Append records.</button>
+                        <br>
+                        <input type="text" id="tableFilter" data-action="filterUploadedRecords" placeholder="Filter transactions..." style="margin-bottom: 10px; padding: 5px; width: 100%; max-width: 400px;" />
+                        <div id="desktop-table-container-section1" style="overflow-x: auto; max-height: 80vh;">
                             <!-- Your desktop table here -->
                         </div>
-
-                        <div id="mobile-card-container">
+                        <div id="mobile-card-container-section1">
                             <!-- Cards rendered here via JS -->
                         </div>
-
-                        <input type="text" id="tableFilter" placeholder="Filter transactions..." style="margin-bottom: 10px; padding: 5px; width: 100%; max-width: 400px;" />
-                        <div id="desktop-table-container" style="overflow-x: auto; max-height: 80vh;"></div>
+                        <script>
+                            if (!window.showSaveFilePicker || !window.showOpenFilePicker) {
+                                alert("Your browser doesn't support the File System Access API.");
+                            }
+                        </script>
+                    <!-- 📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤 -->
+                </section>
+                <section id="section2" class="section2 section-open">
+                        <h1>Open NDJSON File (new line delimited json file structure)</h1>
+                        <label for="accountEmail_atOpenFile">Account Email Address:</label>
+                        <input type="text" id="accountEmail_atOpenFile" data-action="validateEmailAddress" placeholder="me@email.com" required />
+                        <label for="portfolioId_atOpenFile">Portfolio ID:</label>
+                        <input type="text" id="portfolioId_atOpenFile" placeholder="e.g. ACC-12345" required />
+                        <label for="portfolioName_atOpenFile">Account Name:</label>
+                        <input type="text" id="portfolioName_atOpenFile" placeholder="e.g. Primary Investment" required />
+                        <button id="openButton" data-action="openNDjsonFile">📂 Open file</button>
+                        <pre id="loadedFileContent" style="display:none"></pre>
+                        <div id="desktop-table-container-section2">
+                            <!-- Your desktop table here -->
+                        </div>
+                        <div id="mobile-card-container-section2">
+                            <!-- Cards rendered here via JS -->
+                        </div>
+                        <input type="text" id="tableFilter" data-action="filterAllRecords" placeholder="Filter transactions..." style="margin-bottom: 10px; padding: 5px; width: 100%; max-width: 400px;" />
+                        <div id="desktop-table-container-section2" style="overflow-x: auto; max-height: 80vh;background-color: aqua;"></div>
                 </section>
                 <section id="section3" class="section3 section-googleAPIs">
                     <!-- 📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌📌 -->
@@ -881,9 +479,9 @@
     <footer>
         <div id="footer-controls-container" class="footer-controls-container">
             <img id="footer-control-home" src="/_Home.png" class="footer-control" data-section-number="0">
-            <img id="footer-control-menu" src="/_Menu.png" class="footer-control" data-section-number="1">
+            <img id="footer-control-menu" src="/_fileUpload.png" class="footer-control" data-section-number="1">
             <img id="footer-control-camera" src="/_fileOpen.png" class="footer-control" data-section-number="2">
-            <img id="footer-control-address" src="/_fileUpload.png" class="footer-control" data-section-number="3">
+            <img id="footer-control-address" src="/_Address.png" class="footer-control" data-section-number="3">
             <img id="footer-control-notes" src="/_Note.png" class="footer-control" data-section-number="4">
             <img id="footer-control-save" src="/_fileSave.png" class="footer-control" data-section-number="5">
             <img id="footer-control-search" src="/_Search.png" class="footer-control" data-section-number="6">
@@ -948,89 +546,6 @@
         //         });
         //     }
         // // re-load END
-
-let fileHandle; // persist file handle for saving
-let savedEmail = ''; // to create consistent file name
-// Save to NDJSON file
-document.getElementById('saveButton').addEventListener('click', async () => {
-  try {
-    if (!window.showSaveFilePicker) {
-      alert('This feature requires a supported browser (e.g., Chrome).');
-      return;
-    }
-
-    const jsonString = window.localStorage.getItem("XLfinance_parsedData");
-    const parsedData = JSON.parse(jsonString);
-    if (!parsedData || parsedData.length === 0) {
-      alert('No parsed data to save.');
-      return;
-    }
-
-    const accountEmail = parsedData[0]?.accountEmail || 'unknown';
-    savedEmail = accountEmail;
-
-    const fileName = `XLfinance_${accountEmail}.ndjson`;
-
-    if (!fileHandle) {
-      fileHandle = await window.showSaveFilePicker({
-        suggestedName: fileName,
-        types: [{
-          description: 'NDJSON File',
-          accept: { 'application/x-ndjson': ['.ndjson'] }
-        }]
-      });
-    }
-
-    const writable = await fileHandle.createWritable({ keepExistingData: true });
-
-    for (const record of parsedData) {
-      await writable.write(JSON.stringify(record) + '\n');
-    }
-
-    await writable.close();
-    alert('File saved successfully.');
-  } catch (err) {
-    console.error('Save error:', err);
-    alert('Could not save file.');
-  }
-});
-
-// Open existing NDJSON file
-document.getElementById('openButton').addEventListener('click', async () => {
-  try {
-    if (!window.showOpenFilePicker) {
-      alert('This feature requires a supported browser (e.g., Chrome).');
-      return;
-    }
-
-    const [handle] = await window.showOpenFilePicker({
-      types: [{
-        description: 'NDJSON File',
-        accept: { 'application/x-ndjson': ['.ndjson'] }
-      }]
-    });
-
-    const file = await handle.getFile();
-    const text = await file.text();
-
-    // Optional: parse into objects
-    const ndjsonLines = text.trim().split('\n');
-    const parsedObjects = ndjsonLines.map(line => JSON.parse(line));
-
-    // document.getElementById('loadedFileContent').style.display="block";
-    // document.getElementById('loadedFileContent').textContent = JSON.stringify(parsedObjects, null, 2);
-    document.getElementById("accountEmail").value = parsedObjects[0].accountEmail;
-    document.getElementById("portfolioId").value = parsedObjects[0].portfolioId;
-    document.getElementById("portfolioName").value = parsedObjects[0].portfolioName;
-    renderTransactions(parsedObjects);
-
-    console.log('Loaded records:', parsedObjects);
-  } catch (err) {
-    console.error('Open error:', err);
-    alert('Could not open file.');
-  }
-});
-
 
     </script>
 </body>
