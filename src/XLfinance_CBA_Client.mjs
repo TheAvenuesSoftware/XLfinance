@@ -26,7 +26,7 @@ export function XLfinance_CBA_Client_isLoaded(){
         }
 
 
-    function parseTransactions(csvText, accountEmail, portfolioId, portfolioName, portfolioGSTrate, portfolioFXrate) {
+    function parseTransactions_cbaPortfolio(csvText, accountEmail, portfolioId, portfolioName, portfolioGSTrate, portfolioFXrate) {
       const lines = csvText.trim().split('\n');
       const headers = lines[0].split(',').map(h => h.trim());
 
@@ -54,7 +54,7 @@ export function XLfinance_CBA_Client_isLoaded(){
             idReference = reference.replace(/\s+/g, '_');
         // console.log(idReference);
         const id = idDate + '_' + idReference;
-        console.log(id);
+        // console.log(id);
 
         // Start with accountEmail/portfolioId/portfolioName at beginning
         const result = {
@@ -111,34 +111,133 @@ export function XLfinance_CBA_Client_isLoaded(){
       });
     }
 
+    function parseTransactions_cbaBank(csvText, accountEmail, portfolioId, portfolioName, portfolioGSTrate, portfolioFXrate) {
+      const lines = csvText.trim().split('\n');
+      const headers = lines[0].split(',').map(h => h.trim());
+
+      return lines.slice(1).map(line => {
+        const values = line.split(',').map(v => v.trim());
+        const row = Object.fromEntries(headers.map((h, i) => [h, values[i] || '']));
+
+        const details = row.Details;
+        
+        let idDate =`unknown`;
+        // const rawDate = row.Date || '';
+        const rawDate = parseDate(row.Date,"d/m/y");
+        const dateObj = new Date(rawDate);
+        if (!isNaN(dateObj.getTime())) {
+            const yyyy = dateObj.getFullYear();
+            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const dd = String(dateObj.getDate()).padStart(2, '0');
+            idDate = `${yyyy}${mm}${dd}`;
+        }
+        // console.log(row.Date);
+        // console.log(idDate);
+        let idReference = 'unknown';
+        const reference = row.Reference || '';
+        // Sanitize reference string
+            idReference = reference.replace(/\s+/g, '_');
+        // console.log(idReference);
+        const id = idDate + '_' + idReference;
+        // console.log(id);
+
+        // Start with accountEmail/portfolioId/portfolioName at beginning
+        const result = {
+          accountEmail: accountEmail,
+          portfolioId: portfolioId,
+          portfolioName: portfolioName,
+          portfolioGSTrate: portfolioGSTrate,
+          portfolioFXrate: portfolioFXrate,
+          original: line,
+          id: id,
+          Date: row.Date,
+          Reference: row.Reference,
+          Debit: row["Debit($)"],
+          Credit: row["Credit($)"],
+          Balance: row["Balance($)"]
+        };
+
+        // 1. B or S transaction
+        if (/^[BS]\s+\d+/.test(details)) {
+          const [trxType, trxQty, trxTicker, atSymbol, trxUnitAmount] = details.split(/\s+/);
+          Object.assign(result, {
+            trxType,
+            trxQty,
+            trxTicker,
+            trx: atSymbol,
+            trxUnitAmount,
+            Brokerage_inclGST: Math.abs(( trxQty * trxUnitAmount - row["Credit($)"] - row["Debit($)"] )).toFixed(2),
+            GST: Math.abs((( trxQty * trxUnitAmount - row["Credit($)"] - row["Debit($)"] )) / 11).toFixed(2)
+          });
+        }
+        // 2. Drawer
+        else if (/Drawer/i.test(details)) {
+          const match = details.match(/Drawer\s+(.*)/i);
+          result.Drawer = match ? match[1].trim() : '';
+          result.trxType = 'R';
+        }
+        // 3. Payee
+        else if (/Payee/i.test(details)) {
+          const match = details.match(/Payee\s+(.*)/i);
+          result.Payee = match ? match[1].trim() : '';
+          result.trxType = 'P';
+        }
+        // 4. Reference starts with J
+        else if (/^J/i.test(row.Reference)) {
+          result.trxType = 'J';
+          result.Details = details;
+        }
+        // 5. Fallback
+        else {
+          result.Details = details;
+        }
+
+        return result;
+      });
+    }
+
+
 	// upload new records START
 		// 📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤
             let parsedData;
 			export function selectFileForUpload(event){
-				// document.getElementById('csvFileInput').addEventListener('change', function (event) {
 				console.log(event.target.id);
 				console.log(event.target.files);
-				// document.getElementById('c').addEventListener('change', function (event) {
-				const file = event.target.files[0];
-				if (!file) return;
-				const accountEmail = document.getElementById('accountEmail').value.trim();
-				const portfolioId = document.getElementById('portfolioId').value.trim();
-				const portfolioName = document.getElementById('portfolioName').value.trim();
+                const accountEmail = document.getElementById('accountEmail').value.trim();
+                const portfolioId = document.getElementById('portfolioId').value.trim();
+                const portfolioName = document.getElementById('portfolioName').value.trim();
                 const portfolioGSTrate = document.getElementById("portfolioGSTrate").value.trim();
                 const portfolioFXrate = document.getElementById("portfolioFXrate").value.trim();
-				if (!accountEmail || !portfolioId || !portfolioName) {
-					alert("Please enter:\n     Account Email Address;\n     Portfolio ID;\n     Account Name;\n...before uploading.");
+                if (!accountEmail || !portfolioId || !portfolioName || !portfolioGSTrate || !portfolioFXrate) {
+                    alert("Please enter:\n     Account Email Address;\n     Portfolio ID;\n     Account Name;\n     GST rate;\n     FX rate;\n...before uploading.");
                     document.getElementById("csvFileInput").value="";
-					return;
-				}
+                    return;
+                }
+				const file = event.target.files[0];
 				const reader = new FileReader();
 				reader.onload = function (e) {
-				const csvText = e.target.result;
-				parsedData = parseTransactions(csvText, accountEmail, portfolioId, portfolioName, portfolioGSTrate, portfolioFXrate);
-				// document.getElementById('output').textContent = JSON.stringify(parsedData, null, 2); // renders raw json of imported csv file
-				renderTransactions(parsedData,"section1");
-				console.log("Parsed JSON:", parsedData);
-				window.localStorage.setItem("XLfinance_parsedData",JSON.stringify(parsedData));
+                    const csvText = e.target.result;
+                    if (!file) return;
+                    // switch parse method based on fileType START
+                        const fileType = document.getElementById("fileType").value;
+                        switch (fileType) {
+                            case 'cbaPortfolio':
+                                parsedData = parseTransactions_cbaPortfolio(csvText, accountEmail, portfolioId, portfolioName, portfolioGSTrate, portfolioFXrate);
+                                renderTransactions(parsedData,"section1",fileType);
+                                break;
+                            case 'cbaBank':
+                                parsedData = parseTransactions_cbaBank(csvText, accountEmail, portfolioId, portfolioName, portfolioGSTrate, portfolioFXrate);
+                                renderTransactions(parsedData,"section1",fileType);
+                                break;
+                            default:
+                                console.error(`Unsupported file type: ${fileType}`);
+                        }
+                    // switch parse method based on fileType START
+                    // original parse code START
+                        // parsedData = parseTransactions(csvText, accountEmail, portfolioId, portfolioName, portfolioGSTrate, portfolioFXrate);
+                    // original parse code END
+                    document.getElementById('output').textContent = JSON.stringify(parsedData, null, 2); // renders raw json of imported csv file
+                    console.log("Parsed JSON:", parsedData);
 				};
 				reader.readAsText(file);
 			}
@@ -298,25 +397,25 @@ export function XLfinance_CBA_Client_isLoaded(){
             data.forEach(txn => {
                 const card = document.createElement('div');
                 card.style.cssText = `
-                border: 1px solid #ccc;
-                border-radius: 8px;
-                margin: 10px 0;
-                padding: 10px;
-                background-color: #f9f9f9;
+                    border: 1px solid #ccc;
+                    border-radius: 8px;
+                    margin: 10px 0;
+                    padding: 10px;
+                    background-color: #f9f9f9;
                 `;
 
                 card.innerHTML = `
-                <strong>Date:</strong> ${txn.Date || ''}<br>
-                <strong>Reference:</strong> ${txn.Reference || ''}<br>
-                <strong>Type:</strong> ${txn.trxType || ''}<br>
-                ${txn.trxQty ? `<strong>Qty:</strong> ${txn.trxQty}<br>` : ''}
-                ${txn.trxTicker ? `<strong>Ticker:</strong> ${txn.trxTicker}<br>` : ''}
-                ${txn.trxUnitAmount ? `<strong>Unit Amount:</strong> ${txn.trxUnitAmount}<br>` : ''}
-                ${txn.Payee ? `<strong>Payee:</strong> ${txn.Payee}<br>` : ''}
-                ${txn.Drawer ? `<strong>Drawer:</strong> ${txn.Drawer}<br>` : ''}
-                <strong>Debit:</strong> ${txn.Debit || ''}<br>
-                <strong>Credit:</strong> ${txn.Credit || ''}<br>
-                <strong>Balance:</strong> ${txn.Balance || ''}<br>
+                    <strong>Date:</strong> ${txn.Date || ''}<br>
+                    <strong>Reference:</strong> ${txn.Reference || ''}<br>
+                    <strong>Type:</strong> ${txn.trxType || ''}<br>
+                    ${txn.trxQty ? `<strong>Qty:</strong> ${txn.trxQty}<br>` : ''}
+                    ${txn.trxTicker ? `<strong>Ticker:</strong> ${txn.trxTicker}<br>` : ''}
+                    ${txn.trxUnitAmount ? `<strong>Unit Amount:</strong> ${txn.trxUnitAmount}<br>` : ''}
+                    ${txn.Payee ? `<strong>Payee:</strong> ${txn.Payee}<br>` : ''}
+                    ${txn.Drawer ? `<strong>Drawer:</strong> ${txn.Drawer}<br>` : ''}
+                    <strong>Debit:</strong> ${txn.Debit || ''}<br>
+                    <strong>Credit:</strong> ${txn.Credit || ''}<br>
+                    <strong>Balance:</strong> ${txn.Balance || ''}<br>
                 `;
                 container.appendChild(card);
             });

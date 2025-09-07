@@ -20,18 +20,22 @@ export function projectMJSisLoaded(){
 // 🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️🗺️
     // functions mapping START
         export const actions = {
-            selectFileForUpload: (event) => {
-                console.log(event.target);
-                cba.selectFileForUpload(event);
-            },
+            // DON'T use DOM delegation via data-action for file selections START
+            // selectFileForUpload: (event) => {
+            //     console.log(event.target);
+            //     cba.selectFileForUpload(event);
+            // },
+            // DON'T use DOM delegation via data-action for file selections END
             appendUploadedRecords: (event) => {
                 console.log(event.target);
                 cba.appendUploadedRecords(event);
             },
-            openNDjsonFile: (event) => {
-                console.log(event.target);
-                cba.openNDjsonFile(event);
-            },
+            // DON'T use DOM delegation via data-action for file selections START
+            // openNDjsonFile: (event) => {
+            //     console.log(event.target);
+            //     cba.openNDjsonFile(event);
+            // },
+            // DON'T use DOM delegation via data-action for file selections END
             alertDateTime: () => alert(`Current date and time: ${new Date().toLocaleString()}`),
             showNotes: () => doThis('showNotes'),
             selectImageToUpload: () => selectImageToUpload(),
@@ -93,6 +97,15 @@ export function projectMJSisLoaded(){
 
             });
 
+            document.getElementById("csvFileInput").addEventListener("change", (event) => {
+                const file = event.target.files[0];
+                if (!file) {
+                    console.warn("No file selected.");
+                    return;
+                }
+                cba.selectFileForUpload(event);
+            });
+
         // 2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣ END
 
     });
@@ -106,27 +119,27 @@ export function projectMJSisLoaded(){
         // 🔊🎤🦻🔊🎤🦻🔊🎤🦻🔊🎤🦻🔊🎤🦻🔊🎤🦻🔊🎤🦻🔊🎤🦻🔊🎤🦻🔊🎤🦻🔊🎤🦻🔊🎤🦻🔊🎤🦻🔊🎤🦻🔊🎤🦻🔊🎤🦻🔊🎤🦻
             // add PROJECT SPECIFIC event listeners START
                 let logCount = 0;
-                document.addEventListener("change", (event) => { // written by ChatGPT START
-                    // Prevents the event from bubbling up to parent elements START
-                        event.stopPropagation();
-                    // Prevents the event from bubbling up to parent elements END
-                    logCount++;
-                    console.log(logCount, event.target);
-                    const action = event.target.dataset.action;
-                    const handler = actions[action];
-                    console.log(`Action: ${action}, Handler: ${handler}`);
-                    if (typeof handler === "function") {
-                        try {
-                            console.warn(`🟢 Handler found for action: ${action}`);
-                            console.warn(`🟢 Triggered by element: ${event.target.id}`);
-                            handler(event);
-                        } catch (error) {
-                            console.error(`🔴 Error executing handler for action: ${action}`, error);
-                        }
-                    } else {
-                        console.warn(`🔴 No handler found for action: ${action}`);
-                    }
-                }); // written by ChatGPT END
+                // document.addEventListener("change", (event) => { // written by ChatGPT START
+                //     // Prevents the event from bubbling up to parent elements START
+                //         event.stopPropagation();
+                //     // Prevents the event from bubbling up to parent elements END
+                //     logCount++;
+                //     console.log(logCount, event.target);
+                //     const action = event.target.dataset.action;
+                //     const handler = actions[action];
+                //     console.log(`Action: ${action}, Handler: ${handler}`);
+                //     if (typeof handler === "function") {
+                //         try {
+                //             console.warn(`🟢 Handler found for action: ${action}`);
+                //             console.warn(`🟢 Triggered by element: ${event.target.id}`);
+                //             handler(event);
+                //         } catch (error) {
+                //             console.error(`🔴 Error executing handler for action: ${action}`, error);
+                //         }
+                //     } else {
+                //         console.warn(`🔴 No handler found for action: ${action}`);
+                //     }
+                // }); // written by ChatGPT END
                 document.addEventListener("click", (event) => {
                     // Prevents the event from bubbling up to parent elements START
                         event.stopPropagation(); // Prevents the event from bubbling up to parent elements

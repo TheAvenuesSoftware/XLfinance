@@ -278,23 +278,7 @@
                 <section id="section1" class="section1 section-uploads">
                     <!-- 📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤📤 -->
                     <!-- uploads -->
-                        <!-- <h1>Upload CSV File</h1>
-                        <label for="accountEmail">Account Email Address:</label>
-                        <input type="text" id="accountEmail" data-action="validateEmailAddress" placeholder="e.g. yourname@email.com" required />
-                        <br>
-                        <label for="portfolioId">Portfolio ID:</label>
-                        <input type="text" id="portfolioId" placeholder="e.g. ACC-12345" required />
-                        <br>
-                        <label for="portfolioName">Account Name:</label>
-                        <input type="text" id="portfolioName" placeholder="e.g. Primary Investment" required />
-                        <br>
-                        <label for="portfolioGSTrate">GST rate:</label>
-                        <input type="text" id="portfolioGSTrate" placeholder="e.g. 10" required />
-                        <br>
-                        <label for="portfolioFXrate">FX rate:</label>
-                        <input type="text" id="portfolioFXrate" placeholder="e.g. 1" required />
-                        <br> -->
-                        <!-- collapsible container START -->
+                        <!-- collapsible container for upload parameters START -->
                             <details>
                                 <summary><h1>Upload CSV File</h1></summary>
                                 <label for="accountEmail">Account Email Address:</label>
@@ -338,29 +322,46 @@
                                     required
                                 />
                                 <br />
+                                <!-- file type selection START -->
+                                    <label for="fileType">Select file type:</label>
+                                    <select id="fileType" name="fileType" required>
+                                        <option value="" disabled selected>Select file type</option>
+                                        <option value="cbaPortfolio">CBA Portfolio transactions</option>
+                                        <option value="cbaBank">CBA Bank Account transactions</option>
+                                    </select>
+                                <!-- file type selection END -->
+                                <!--  -->
+                                    <div id="bankAccountNumberWrapper" style="display:none">
+                                        <label for="bankAccountNumber">Bank Account number:</label>
+                                        <input
+                                            type="text"
+                                            id="bankAccountNumber"
+                                            placeholder="e.g. 0"
+                                            required
+                                        />
+                                    </div>
+                                <!--  -->
+                                <br />
                             </details>
-                        <!-- collapsible container END -->
-
-                        <!-- file selection START -->
-                            <label for="csvFileInput" id="customUploadButton" style="cursor: pointer;">
-                                📤 Upload new transactions.
-                            </label>
-                            <!-- <label for="csvFileInput" id="customUploadButton" style="cursor: pointer;">
-                                <button type="button" data-action="selectFileForUpload">
-                                    📤 Upload new transactions, choose file.
-                                </button>
-                            </label> -->
-                            <input type="file" id="csvFileInput" data-action="selectFileForUpload" accept=".csv" />
-                        <!-- file selection END -->
-                        <!--
-                            The <pre> tag is used to display text exactly as it is written in the HTML source, preserving:
-                            -   Whitespace (spaces and tabs)
-                            -   Line breaks
-                            -   Monospaced font (by default) 
-                            -->
-                            <!-- document.getElementById('output').innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`; -->
-                            <pre id="output" style="display:x_none"></pre> 
-                        <!--  -->
+                                <!-- file selection START -->
+                                    <span for="csvFileInput">📤 Upload new transactions.</span> 
+                                    <input type="file" id="csvFileInput" accept=".csv" />
+                                <!-- file selection END -->
+                        <!-- collapsible container for upload parameters END -->
+                         <!-- imported in NDJSON format START -->
+                            <details>
+                                <summary><h1>Uploaded in NDJSON format</h1></summary>
+                                <!-- 
+                                    The <pre> tag is used to display text exactly as it is written in the HTML source, preserving:
+                                    -   Whitespace (spaces and tabs)
+                                    -   Line breaks
+                                    -   Monospaced font (by default) 
+                                    -->
+                                    <!-- document.getElementById('output').innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`; -->
+                                    <pre id="output"></pre> 
+                                <!--  -->
+                            </details>
+                         <!-- imported in NDJSON format END -->
                         <br>
                         <label>💾 Add these records to your file?</label>
                         <button id="saveButton" data-action="appendUploadedRecords">Append records.</button>
@@ -373,6 +374,18 @@
                             <!-- Cards rendered here via JS -->
                         </div>
                         <script>
+                            document.getElementById("csvFileInput").disabled = true;
+                            document.getElementById("fileType").addEventListener("change", function () {
+                                if(document.getElementById("fileType").value==="cbaBank"){
+                                    document.getElementById("bankAccountNumberWrapper").style.display = "block";
+                                    document.getElementById("bankAccountNumberWrapper").required = true;
+                                }else{
+                                    document.getElementById("csvFileInput").disabled = false;
+                                }
+                            });
+                            document.getElementById("bankAccountNumber").addEventListener("blur", function () {
+                                document.getElementById("csvFileInput").disabled = false;
+                            });
                             if (!window.showSaveFilePicker || !window.showOpenFilePicker) {
                                 alert("Your browser doesn't support the File System Access API.");
                             }
