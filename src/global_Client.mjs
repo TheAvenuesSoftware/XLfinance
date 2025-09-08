@@ -673,3 +673,84 @@ function logAllEvents(target = document.body) {
         return isNaN(date.getTime()) ? null : date;
     }
 // parse text date depending on known format d/m/y OR m/d/y START
+
+// // check the data type of a value START
+//     export function getType_Simple(value) {
+//         if (value === null) return 'null';
+//         if (typeof value === 'number' && !isNaN(value)) return 'number';
+//         if (typeof value === 'string') {
+//             // Check for date (ISO format or valid date string)
+//             const date = new Date(value);
+//             if (!isNaN(date.getTime())){
+//                 return 'date';
+//             }
+//             return 'text';
+//         }
+//         return 'unknown';
+//     }
+// // check the data type of a value END
+
+// // ROBUST for CSV - check the data type of a value START
+// export function getType_RobustCSV(value, dateFormat='d/m/y') {
+//     console.log('getType_RobustCSV(value):-',value);
+//     function sanitisedValue(raw) {
+//         const val = typeof raw === 'string' ? raw.trim() : raw;
+//         console.log("typeof raw === 'string' ? raw.trim() : raw;:-",val);
+//         // Null or empty string → null
+//             if (val === '' || val === null){
+//                  return null;
+//             }
+//         // Check for signed numbers: +42, -3.14, etc.
+//             // // if (/^[+-]?\d+(\.\d+)?$/.test(val)){
+//             // if (/^[+-]?(?:\d+\.?\d*|\.\d+)$/.test(val)) {
+//             //     console.log('Number detected:-',val);
+//             //     console.log('Number detected:-',Number(val));
+//             //     return Number(val);
+//             // }
+//             if(isNumeric(val)===true){
+//                 console.log('isNumeric true detected:-',val);
+//                 console.log('isNumeric true detected:-',Number(val.replace(/,/g, '')));
+//                 // return Number(val.replace(/,/g, ''));
+//                 return val.replace(/,/g, '');
+//             }
+//         // // Check for ISO-style date
+//         //     const date = new Date(val);
+//         //     if (!isNaN(date.getTime()) && /^\d{4}-\d{2}-\d{2}/.test(val)){
+//         //          return date;
+//         //     }
+//         // Try to parse date using provided format
+//             const parsedDate = parseDate(val, dateFormat);
+//             if (parsedDate instanceof Date && !isNaN(parsedDate.getTime())) {
+//                 return parsedDate;
+//             }
+//         // Otherwise, treat as text
+//             return val;
+//     }
+//     const actualValue= sanitisedValue(value);
+//     console.log('actualValue:-',actualValue);
+//     // Type detection
+//         if (actualValue === null) return 'null';
+//         if (typeof actualValue === 'number') return 'number';
+//         if (actualValue instanceof Date) return 'date';
+//         return 'text';
+// }
+// // ROBUST for CSV - check the data type of a value END
+
+export function isNumeric(val) {
+    console.log('isNumeric val:-',val);
+    if (typeof val !== 'string'){
+        return false;
+    } // we only process strings!
+    const cleaned = val.replace(/,/g, '').replace(/"/g, "").trim(); // remove commas and whitespace
+    console.log('isNumeric cleaned:-',cleaned);
+    // return !isNaN(Number(cleaned));
+    if (!isNaN(Number(cleaned))) return 'number';
+}
+export function getTypeOf(value, dateFormat='d/m/y') {
+    console.log(value);
+    if (value === null) return 'null';
+    if (isNumeric(String(value)) === 'number') return 'number';
+    if(parseDate(value, dateFormat) instanceof Date && !isNaN(parseDate(value, dateFormat).getTime())) return 'date';
+    if (typeof value === 'string') return 'text';
+    return 'not: null; number; date; text';
+}

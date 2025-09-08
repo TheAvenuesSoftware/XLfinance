@@ -8,6 +8,7 @@ export function XLfinance_CBA_Client_isLoaded(){
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 //  ONLY IMPORT CLIENT SIDE MODULES TO HERE
     import { parseDate } from './global_Client.mjs';
+    import { getTypeOf} from './global_Client.mjs';
 // ♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️♾️
 
 
@@ -26,174 +27,395 @@ export function XLfinance_CBA_Client_isLoaded(){
         }
 
 
-    function parseTransactions_cbaPortfolio(csvText, accountEmail, portfolioId, portfolioName, portfolioGSTrate, portfolioFXrate) {
-      const lines = csvText.trim().split('\n');
-      const headers = lines[0].split(',').map(h => h.trim());
+function parseTransactions_cbaPortfolio(csvText, accountEmail, portfolioId, portfolioName, portfolioGSTrate, portfolioFXrate) {
+    const lines = csvText.trim().split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
 
-      return lines.slice(1).map(line => {
-        const values = line.split(',').map(v => v.trim());
-        const row = Object.fromEntries(headers.map((h, i) => [h, values[i] || '']));
-
-        const details = row.Details;
-        
-        let idDate =`unknown`;
-        // const rawDate = row.Date || '';
-        const rawDate = parseDate(row.Date,"d/m/y");
-        const dateObj = new Date(rawDate);
-        if (!isNaN(dateObj.getTime())) {
-            const yyyy = dateObj.getFullYear();
-            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
-            const dd = String(dateObj.getDate()).padStart(2, '0');
-            idDate = `${yyyy}${mm}${dd}`;
-        }
-        // console.log(row.Date);
-        // console.log(idDate);
-        let idReference = 'unknown';
-        const reference = row.Reference || '';
-        // Sanitize reference string
-            idReference = reference.replace(/\s+/g, '_');
-        // console.log(idReference);
-        const id = idDate + '_' + idReference;
-        // console.log(id);
-
-        // Start with accountEmail/portfolioId/portfolioName at beginning
-        const result = {
-          accountEmail: accountEmail,
-          portfolioId: portfolioId,
-          portfolioName: portfolioName,
-          portfolioGSTrate: portfolioGSTrate,
-          portfolioFXrate: portfolioFXrate,
-          original: line,
-          id: id,
-          Date: row.Date,
-          Reference: row.Reference,
-          Debit: row["Debit($)"],
-          Credit: row["Credit($)"],
-          Balance: row["Balance($)"]
-        };
-
-        // 1. B or S transaction
-        if (/^[BS]\s+\d+/.test(details)) {
-          const [trxType, trxQty, trxTicker, atSymbol, trxUnitAmount] = details.split(/\s+/);
-          Object.assign(result, {
-            trxType,
-            trxQty,
-            trxTicker,
-            trx: atSymbol,
-            trxUnitAmount,
-            Brokerage_inclGST: Math.abs(( trxQty * trxUnitAmount - row["Credit($)"] - row["Debit($)"] )).toFixed(2),
-            GST: Math.abs((( trxQty * trxUnitAmount - row["Credit($)"] - row["Debit($)"] )) / 11).toFixed(2)
-          });
-        }
-        // 2. Drawer
-        else if (/Drawer/i.test(details)) {
-          const match = details.match(/Drawer\s+(.*)/i);
-          result.Drawer = match ? match[1].trim() : '';
-          result.trxType = 'R';
-        }
-        // 3. Payee
-        else if (/Payee/i.test(details)) {
-          const match = details.match(/Payee\s+(.*)/i);
-          result.Payee = match ? match[1].trim() : '';
-          result.trxType = 'P';
-        }
-        // 4. Reference starts with J
-        else if (/^J/i.test(row.Reference)) {
-          result.trxType = 'J';
-          result.Details = details;
-        }
-        // 5. Fallback
-        else {
-          result.Details = details;
-        }
-
-        return result;
-      });
+    // Validate required headings
+    const cbaPortfolioHeadings = ['Date','Reference','Details','Debit($)','Credit($)','Balance($)'];
+    const missing = cbaPortfolioHeadings.filter(heading => !headers.includes(heading));
+    if (missing.length > 0) {
+        alert(`The uploaded file is missing expected headings:\n${missing.join(', ')}`);
+        parsedData = null;
+        document.getElementById('output').textContent = '';
+        document.getElementById("csvFileInput").value="";
+        return;
     }
 
-    function parseTransactions_cbaBank(csvText, accountEmail, portfolioId, portfolioName, portfolioGSTrate, portfolioFXrate) {
-      const lines = csvText.trim().split('\n');
-      const headers = lines[0].split(',').map(h => h.trim());
+    // Track index per date
+    const indexByDate = {};
 
-      return lines.slice(1).map(line => {
+    return lines.slice(1).map(line => {
         const values = line.split(',').map(v => v.trim());
         const row = Object.fromEntries(headers.map((h, i) => [h, values[i] || '']));
 
         const details = row.Details;
-        
-        let idDate =`unknown`;
-        // const rawDate = row.Date || '';
-        const rawDate = parseDate(row.Date,"d/m/y");
+
+        let idDate = 'unknown';
+        const rawDate = parseDate(row.Date, "d/m/y");
         const dateObj = new Date(rawDate);
         if (!isNaN(dateObj.getTime())) {
             const yyyy = dateObj.getFullYear();
             const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
-            const dd = String(dateObj.getDate()).padStart(2, '0');
+            const dd = String(dateObj.getDate()).padStart(2, '0');  
             idDate = `${yyyy}${mm}${dd}`;
         }
-        // console.log(row.Date);
-        // console.log(idDate);
-        let idReference = 'unknown';
-        const reference = row.Reference || '';
-        // Sanitize reference string
-            idReference = reference.replace(/\s+/g, '_');
-        // console.log(idReference);
-        const id = idDate + '_' + idReference;
-        // console.log(id);
 
-        // Start with accountEmail/portfolioId/portfolioName at beginning
+        // Sanitize reference
+        const reference = row.Reference || '';
+        // const idReference = reference.replace(/\s+/g, '_').replace(/\|/g, '__').toLowerCase();
+        const idReference = reference.replace(/\s+/g, '_').replace(/\|/g, '__');
+
+        // Get and update index for this date
+        if (!indexByDate[idDate]) {
+            indexByDate[idDate] = 1;
+        } else {
+            indexByDate[idDate]++;
+        }
+        const paddedIndex = indexByDate[idDate].toString().padStart(4, '0');
+
+        const id = `${idDate}|${paddedIndex}|${idReference}`;
+
         const result = {
-          accountEmail: accountEmail,
-          portfolioId: portfolioId,
-          portfolioName: portfolioName,
-          portfolioGSTrate: portfolioGSTrate,
-          portfolioFXrate: portfolioFXrate,
-          original: line,
-          id: id,
-          Date: row.Date,
-          Reference: row.Reference,
-          Debit: row["Debit($)"],
-          Credit: row["Credit($)"],
-          Balance: row["Balance($)"]
+            accountEmail,
+            portfolioId,
+            portfolioName,
+            portfolioGSTrate,
+            portfolioFXrate,
+            original: line,
+            id,
+            Date: row.Date,
+            Reference: row.Reference,
+            Debit: row["Debit($)"],
+            Credit: row["Credit($)"],
+            Balance: row["Balance($)"]
         };
 
-        // 1. B or S transaction
+        // Transaction Type Detection
         if (/^[BS]\s+\d+/.test(details)) {
-          const [trxType, trxQty, trxTicker, atSymbol, trxUnitAmount] = details.split(/\s+/);
-          Object.assign(result, {
-            trxType,
-            trxQty,
-            trxTicker,
-            trx: atSymbol,
-            trxUnitAmount,
-            Brokerage_inclGST: Math.abs(( trxQty * trxUnitAmount - row["Credit($)"] - row["Debit($)"] )).toFixed(2),
-            GST: Math.abs((( trxQty * trxUnitAmount - row["Credit($)"] - row["Debit($)"] )) / 11).toFixed(2)
-          });
-        }
-        // 2. Drawer
-        else if (/Drawer/i.test(details)) {
-          const match = details.match(/Drawer\s+(.*)/i);
-          result.Drawer = match ? match[1].trim() : '';
-          result.trxType = 'R';
-        }
-        // 3. Payee
-        else if (/Payee/i.test(details)) {
-          const match = details.match(/Payee\s+(.*)/i);
-          result.Payee = match ? match[1].trim() : '';
-          result.trxType = 'P';
-        }
-        // 4. Reference starts with J
-        else if (/^J/i.test(row.Reference)) {
-          result.trxType = 'J';
-          result.Details = details;
-        }
-        // 5. Fallback
-        else {
-          result.Details = details;
+            const [trxType, trxQty, trxTicker, atSymbol, trxUnitAmount] = details.split(/\s+/);
+            Object.assign(result, {
+                trxType,
+                trxQty,
+                trxTicker,
+                trx: atSymbol,
+                trxUnitAmount,
+                Brokerage_inclGST: Math.abs(( trxQty * trxUnitAmount - row["Credit($)"] - row["Debit($)"] )).toFixed(2),
+                GST: Math.abs((( trxQty * trxUnitAmount - row["Credit($)"] - row["Debit($)"] )) / 11).toFixed(2)
+            });
+        } else if (/Drawer/i.test(details)) {
+            const match = details.match(/Drawer\s+(.*)/i);
+            result.Drawer = match ? match[1].trim() : '';
+            result.trxType = 'R';
+        } else if (/Payee/i.test(details)) {
+            const match = details.match(/Payee\s+(.*)/i);
+            result.Payee = match ? match[1].trim() : '';
+            result.trxType = 'P';
+        } else if (/^J/i.test(row.Reference)) {
+            result.trxType = 'J';
+            result.Details = details;
+        } else {
+            result.Details = details;
         }
 
         return result;
-      });
+    });
+}
+
+function parseTransactions_cbaBank(csvText, accountEmail, portfolioId, portfolioName, portfolioGSTrate, portfolioFXrate, cbaBankAccountNumber) {
+    const lines = csvText.trim().split('\n');
+    const cbaBankDataTypes = ['date', 'number', 'text', 'number'];
+    const headers = ['Date', 'Amount', 'Details', 'Balance']; // Raw CSV column order
+
+    if (lines.length === 0) {
+        alert('❌ No data found in the uploaded file.');
+        return;
+    }
+
+    const sampleLine = lines[0].split(',').map(v => v.trim());
+
+    if (sampleLine.length !== cbaBankDataTypes.length) {
+        alert('❌ Incorrect number of columns in the uploaded file.\n🟢 Please upload a valid CBA Bank CSV export.');
+        return;
+    }
+
+    // Helper: get data type
+    function getTypeOf(val) {
+        if (!val || val.trim() === '') return 'null';
+        const cleaned = val.replace(/"/g, '').replace(/,/g, '').trim();
+        if (/^[+-]?\d+(\.\d+)?$/.test(cleaned)) return 'number';
+        const date = new Date(cleaned);
+        if (!isNaN(date.getTime())) return 'date';
+        return 'text';
+    }
+
+    // Validate types of first line
+    let dataTypesOk = true;
+    for (let i = 0; i < cbaBankDataTypes.length; i++) {
+        const actualType = getTypeOf(sampleLine[i]);
+        const expectedType = cbaBankDataTypes[i];
+        if (actualType !== expectedType) {
+            dataTypesOk = false;
+            console.warn(`❌ Column ${i} value "${sampleLine[i]}" is type '${actualType}', expected '${expectedType}'`);
+        }
+    }
+
+    if (!dataTypesOk) {
+        alert(`❌ Data types of the import file are incorrect.\nExpected types are: ${cbaBankDataTypes.join(', ')}`);
+        return;
+    }
+
+    // Main transformer
+    const indexByDate = {};  // Tracks index per date
+    function transformRow(rawLine, index) {
+        const [rawDate, rawAmount, rawDetails, rawBalance] = rawLine.split(',').map(v => v.replace(/"/g, '').trim());
+
+        const amount = Number(rawAmount.replace(/,/g, ''));
+        const isCredit = amount >= 0;
+
+        // const dateObj = new Date(rawDate);
+        // const yyyy = dateObj.getFullYear();
+        // const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+        // const dd = String(dateObj.getDate()).padStart(2, '0');
+        // const idDate = !isNaN(dateObj.getTime()) ? `${yyyy}${mm}${dd}` : 'unknown';
+            let idDate =`unknown`;
+            // const rawDate = row.Date || '';
+            const rawDateParsed = parseDate(rawDate,"d/m/y");
+            const dateObj = new Date(rawDateParsed );
+            if (!isNaN(dateObj.getTime())) {
+                const yyyy = dateObj.getFullYear();
+                const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const dd = String(dateObj.getDate()).padStart(2, '0');  
+                idDate = `${yyyy}${mm}${dd}`;
+            }
+
+        const cbaBankNumber = cbaBankAccountNumber.trim().replace(/\s+/g, '-');
+        const idReference = rawDetails.replace(/\s+/g, '_').replace(/\|/g, '__').toLowerCase();
+        const idAmount = Math.abs(amount).toFixed(2).replace('.', 'p').replace(/-/g, 'm');
+        // const id = `${idDate}_${idReference}_${rawAmount}`;
+        // const paddedIndex = index.toString().padStart(4, '0');
+        // Update and reset index per date
+            if (!indexByDate[idDate]) {
+                indexByDate[idDate] = 1;
+            } else {
+                indexByDate[idDate]++;
+            }
+            const paddedIndex = indexByDate[idDate].toString().padStart(4, '0');
+        const id = `${idDate}|${paddedIndex}|CBA-${cbaBankNumber}|${idReference}|${rawAmount}`;
+
+        const result = {
+            id,
+            accountEmail,
+            portfolioId,
+            portfolioName,
+            portfolioGSTrate,
+            portfolioFXrate,
+            cbaBankNumber,
+            original: rawLine,
+            Date: rawDate,
+            Reference: rawDetails,
+            Type: isCredit ? 'credit' : 'debit',
+            Qty: '',
+            Ticker: '',
+            'unit amount': '',
+            Debit: isCredit ? '' : Math.abs(amount),
+            Credit: isCredit ? amount : '',
+            Balance: rawBalance
+        };
+
+        // Detect transaction type (B/S)
+        if (/^[BS]\s+\d+/.test(rawDetails)) {
+            const [trxType, trxQty, trxTicker, atSymbol, trxUnitAmount] = rawDetails.split(/\s+/);
+            const numericQty = Number(trxQty);
+            const numericUnitAmount = Number(trxUnitAmount);
+
+            const trxValue = numericQty * numericUnitAmount;
+            const trxTotal = trxValue - amount;
+
+            Object.assign(result, {
+                trxType,
+                trxQty,
+                trxTicker,
+                trx: atSymbol,
+                trxUnitAmount,
+                Brokerage_inclGST: trxTotal.toFixed(2),
+                GST: (trxTotal / 11).toFixed(2)
+            });
+        }
+        // Drawer
+        else if (/Drawer/i.test(rawDetails)) {
+            const match = rawDetails.match(/Drawer\s+(.*)/i);
+            result.Drawer = match ? match[1].trim() : '';
+            result.trxType = 'R';
+        }
+        // Payee
+        else if (/Payee/i.test(rawDetails)) {
+            const match = rawDetails.match(/Payee\s+(.*)/i);
+            result.Payee = match ? match[1].trim() : '';
+            result.trxType = 'P';
+        }
+        // Reference starts with J
+        else if (/^J/i.test(rawDetails)) {
+            result.trxType = 'J';
+            result.Details = rawDetails;
+        }
+        // Fallback
+        else {
+            result.Details = rawDetails;
+        }
+
+        return result;
+    }
+
+    // Final result: skip header row if needed (if no headers, keep all lines)
+    const results = lines.map(transformRow);
+    console.log('✅ Transformed transactions:', results);
+    return results;
+}
+
+
+    function parseTransactions_cbaBank_OLD(csvText, accountEmail, portfolioId, portfolioName, portfolioGSTrate, portfolioFXrate) {
+        const lines = csvText.trim().split('\n');
+        // use portfolio headers and transform the import later START
+            const headers = ['Date','Reference','Details','Debit($)','Credit($)','Balance($)'];
+            console.log(headers);
+        // use portfolio headers and transform the import later END
+        // // convert to Set for comparison
+        // const headersSet = new Set(headers);
+        // console.log(headersSet);
+        // // Validate required headings
+        // // const cbaBankHeadings = ['Date','DRorCR','Details','Balance($)'];
+        const cbaBankDataTypes = ['date','number','text','number'];
+        const cbaBankLines = lines[0].split(',').map(h => h.trim());
+        if (cbaBankLine.length !== cbaBankDataTypes.length) {
+            alert('❌ Incorrect number of columns in the uploaded file.\n🟢 Please upload a valid CBA Bank CSV export.');
+            return
+        }
+        let dataTypesOk = true;
+        for (let i = 0; i < cbaBankDataTypes.length; i++) {
+            const actualType = getTypeOf(headers[i]);
+            const expectedType = cbaBankDataTypes[i];
+            if (actualType !== expectedType) {
+                dataTypesOk = false;
+                console.log(`❌ Item ${i} is of type '${actualType}', expected '${expectedType}'`);
+            } else {
+                console.log(`✅ Item ${i} is valid (${actualType}', expected '${expectedType}')`);
+            }
+        }
+        if (!dataTypesOk) {
+                alert(`❌ Data types of the import file are incorrect.\nExpected types are: '${cbaBankDataTypes}.`);
+                return;
+        }
+
+        function transformRow(rawLine, id) {
+            const values = rawLine.split(',').map(v => v.replace(/"/g, '').trim());
+
+            const date = values[0];
+            const amountRaw = values[1];
+            const details = values[2];
+            const balance = values[3];
+
+            const amount = Number(amountRaw.replace(/,/g, ''));
+            const isCredit = amount >= 0;
+
+            return {
+                id,
+                Date,
+                Reference: details,
+                Type: isCredit ? 'credit' : 'debit',
+                Qty: '',              // unknown
+                Ticker: '',           // unknown
+                'unit amount': '',    // unknown
+                Debit: isCredit ? '' : Math.abs(amount),
+                Credit: isCredit ? amount : '',
+                Balance: balance
+            };
+        }
+        // const lines = csvText.trim().split('\n');
+        const linesTransformed = lines.map((line, index) => transformRow(line, index + 1));
+        console.log('linesTransformed:-\n',linesTransformed);
+
+        return linesTransformed.slice(1).map(line => {
+            const values = line.split(',').map(v => v.trim());
+            const row = Object.fromEntries(headers.map((h, i) => [h, values[i] || '']));
+
+            const details = row.Details;
+
+            let idDate =`unknown`;
+            // const rawDate = row.Date || '';
+            console.log(row);
+            const rawDate = parseDate(row[0],"d/m/y");
+            const dateObj = new Date(rawDate);
+            if (!isNaN(dateObj.getTime())) {
+                const yyyy = dateObj.getFullYear();
+                const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const dd = String(dateObj.getDate()).padStart(2, '0');
+                idDate = `${yyyy}${mm}${dd}`;
+            }
+            // console.log(row.Date);
+            // console.log(idDate);
+            let idReference = 'unknown';
+            const reference = row || '';
+            // // Sanitize reference string START
+            //     idReference = reference.replace(/\s+/g, '_');
+            // // Sanitize reference string END
+            // console.log(idReference);
+            const id = idDate + '_' + idReference;
+            console.log(id);
+
+            // Start with accountEmail/portfolioId/portfolioName at beginning
+            const result = {
+                accountEmail: accountEmail,
+                portfolioId: portfolioId,
+                portfolioName: portfolioName,
+                portfolioGSTrate: portfolioGSTrate,
+                portfolioFXrate: portfolioFXrate,
+                original: line,
+                id: id,
+                Date: row.Date,
+                Reference: row.Reference,
+                Debit: row[1],
+                Credit: row[1],
+                Balance: row[4]
+            };
+
+            // 1. B or S transaction
+            if (/^[BS]\s+\d+/.test(details)) {
+                const [trxType, trxQty, trxTicker, atSymbol, trxUnitAmount] = details.split(/\s+/);
+                Object.assign(result, {
+                    trxType,
+                    trxQty,
+                    trxTicker,
+                    trx: atSymbol,
+                    trxUnitAmount,
+                    Brokerage_inclGST: Math.abs(( trxQty * trxUnitAmount - row["Credit($)"] - row["Debit($)"] )).toFixed(2),
+                    GST: Math.abs((( trxQty * trxUnitAmount - row["Credit($)"] - row["Debit($)"] )) / 11).toFixed(2)
+                });
+            }
+            // 2. Drawer
+            else if (/Drawer/i.test(details)) {
+                const match = details.match(/Drawer\s+(.*)/i);
+                result.Drawer = match ? match[1].trim() : '';
+                result.trxType = 'R';
+            }
+            // 3. Payee
+            else if (/Payee/i.test(details)) {
+                const match = details.match(/Payee\s+(.*)/i);
+                result.Payee = match ? match[1].trim() : '';
+                result.trxType = 'P';
+            }
+            // 4. Reference starts with J
+            else if (/^J/i.test(row.Reference)) {
+                result.trxType = 'J';
+                result.Details = details;
+            }
+            // 5. Fallback
+            else {
+                result.Details = details;
+            }
+
+            return result;
+        });
     }
 
 
@@ -226,7 +448,8 @@ export function XLfinance_CBA_Client_isLoaded(){
                                 renderTransactions(parsedData,"section1",fileType);
                                 break;
                             case 'cbaBank':
-                                parsedData = parseTransactions_cbaBank(csvText, accountEmail, portfolioId, portfolioName, portfolioGSTrate, portfolioFXrate);
+                                const cbaBankAccountNumber = document.getElementById("bankAccountNumber").value;
+                                parsedData = parseTransactions_cbaBank(csvText, accountEmail, portfolioId, portfolioName, portfolioGSTrate, portfolioFXrate, cbaBankAccountNumber);
                                 renderTransactions(parsedData,"section1",fileType);
                                 break;
                             default:
